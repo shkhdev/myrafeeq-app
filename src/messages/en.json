@@ -1,0 +1,57 @@
+{
+  "common": {
+    "goBack": "Go back",
+    "changeLanguage": "Change language",
+    "sunrise": "Sunrise",
+    "stepOf": "Step {current} of {total}",
+    "checkmark": "Checkmark",
+    "success": "Success",
+    "onboardingComplete": "Onboarding complete",
+    "homeComingSoon": "Home screen coming soon"
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Assalamu Alaikum, {name}!",
+      "skipButton": "Skip",
+      "card1Title": "Your Islamic Companion",
+      "card1Description": "Stay connected to your faith with prayer times, Quran, and daily spiritual guidance.",
+      "card2Title": "Never Miss a Prayer",
+      "card2Description": "Get accurate prayer times for your location and smart reminders so you're always prepared.",
+      "card3Title": "Your Daily Spiritual Practice",
+      "card3Description": "Read Quran, explore Hadith, count dhikr, and discover beautiful duas — all in one place.",
+      "getStarted": "Get Started",
+      "tapToContinue": "Tap to continue"
+    },
+    "location": {
+      "title": "Accurate Prayer Times Need Your Location",
+      "description": "Prayer times vary by city. Share your location for precise calculations and Qibla direction.",
+      "privacyNote": "Your location stays private and is never shared.",
+      "enableLocation": "Enable Location",
+      "searchCity": "Search for City",
+      "searchPlaceholder": "Search cities...",
+      "prayerTimesTitle": "Today's Prayer Times",
+      "continue": "Continue",
+      "skip": "Skip"
+    },
+    "notifications": {
+      "title": "Never Miss a Prayer",
+      "description": "MyRafeeq sends prayer reminders as Telegram messages — right in your chat.",
+      "allPrayers": "All Prayers",
+      "fajr": "Fajr",
+      "dhuhr": "Dhuhr",
+      "asr": "Asr",
+      "maghrib": "Maghrib",
+      "isha": "Isha",
+      "reminderTiming": "Remind me",
+      "atPrayerTime": "At prayer time",
+      "minutesBefore": "{minutes} min before",
+      "completeSetup": "Complete Setup",
+      "enableReminders": "Enable Reminders",
+      "maybeLater": "Maybe Later"
+    },
+    "completion": {
+      "title": "Ma sha Allah, You're All Set!",
+      "description": "Your prayer companion is ready. May your journey with MyRafeeq bring you closer to Allah."
+    }
+  }
+}

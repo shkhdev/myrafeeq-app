@@ -62,6 +62,7 @@
         "useNodejsImportProtocol": "error"
       },
       "suspicious": {
+        "noArrayIndexKey": "warn",
         "noConsole": "warn",
         "noUnknownAtRules": "off"
       },

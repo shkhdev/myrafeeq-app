@@ -1,0 +1,57 @@
+{
+  "common": {
+    "goBack": "Orqaga",
+    "changeLanguage": "Tilni o'zgartirish",
+    "sunrise": "Quyosh chiqishi",
+    "stepOf": "{total} dan {current}-qadam",
+    "checkmark": "Belgi",
+    "success": "Muvaffaqiyat",
+    "onboardingComplete": "Sozlash yakunlandi",
+    "homeComingSoon": "Bosh sahifa tez orada"
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "Assalomu alaykum, {name}!",
+      "skipButton": "O'tkazib yuborish",
+      "card1Title": "Islomiy hamrohing",
+      "card1Description": "Namoz vaqtlari, Qur'on va kundalik ruhiy yo'l-yo'riq bilan imoningizga bog'lanib qoling.",
+      "card2Title": "Hech qachon namozni qoldirmang",
+      "card2Description": "Joylashuvingiz uchun aniq namoz vaqtlari va aqlli eslatmalar oling.",
+      "card3Title": "Kundalik ruhiy amaliyotingiz",
+      "card3Description": "Qur'on o'qing, hadislarni o'rganing, zikr sanang va go'zal duolarni kashf eting — hammasi bir joyda.",
+      "getStarted": "Boshlash",
+      "tapToContinue": "Davom etish uchun bosing"
+    },
+    "location": {
+      "title": "Aniq namoz vaqtlari uchun joylashuvingiz kerak",
+      "description": "Namoz vaqtlari shaharga qarab farq qiladi. Aniq hisob-kitob va Qibla yo'nalishi uchun joylashuvingizni ulashing.",
+      "privacyNote": "Joylashuvingiz maxfiy qoladi va hech kim bilan bo'lishilmaydi.",
+      "enableLocation": "Joylashuvni yoqish",
+      "searchCity": "Shaharni qidirish",
+      "searchPlaceholder": "Shaharlarni qidiring...",
+      "prayerTimesTitle": "Bugungi namoz vaqtlari",
+      "continue": "Davom etish",
+      "skip": "O'tkazib yuborish"
+    },
+    "notifications": {
+      "title": "Hech qachon namozni qoldirmang",
+      "description": "MyRafeeq namoz eslatmalarini Telegram xabar sifatida yuboradi — to'g'ridan-to'g'ri chatda.",
+      "allPrayers": "Barcha namozlar",
+      "fajr": "Bomdod",
+      "dhuhr": "Peshin",
+      "asr": "Asr",
+      "maghrib": "Shom",
+      "isha": "Xufton",
+      "reminderTiming": "Eslatma",
+      "atPrayerTime": "Namoz vaqtida",
+      "minutesBefore": "{minutes} daq. oldin",
+      "completeSetup": "Sozlashni yakunlash",
+      "enableReminders": "Eslatmalarni yoqish",
+      "maybeLater": "Keyinroq"
+    },
+    "completion": {
+      "title": "Ma Shaa Alloh, hammasi tayyor!",
+      "description": "Namoz hamrohing tayyor. MyRafeeq bilan safaringiz muborak bo'lsin."
+    }
+  }
+}

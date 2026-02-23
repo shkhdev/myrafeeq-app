@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+import { resolveLocale } from "@/i18n/locale";
+import { useLocaleStore } from "@/stores/locale-store";
+
 type TelegramSDK = typeof import("@telegram-apps/sdk-react");
 
 const MOCK_THEME_PARAMS = {
@@ -20,11 +23,22 @@ const MOCK_THEME_PARAMS = {
   link_color: "#1a7f50" as const,
 };
 
-function initThemeAndCssVars(sdk: TelegramSDK) {
-  sdk.init();
-  sdk.themeParams.mountSync();
-  sdk.themeParams.bindCssVars();
-  document.documentElement.classList.add("tg-app");
+const MOCK_USER = {
+  id: 12345,
+  first_name: "Test",
+  last_name: "User",
+  username: "testuser",
+  language_code: "en",
+  is_premium: false,
+};
+
+function buildMockInitData(): string {
+  return new URLSearchParams({
+    user: JSON.stringify(MOCK_USER),
+    auth_date: String(Math.floor(Date.now() / 1000)),
+    hash: "mock_hash_for_development",
+    signature: "mock_signature_for_development",
+  }).toString();
 }
 
 async function mountViewport(sdk: TelegramSDK) {
@@ -35,25 +49,83 @@ async function mountViewport(sdk: TelegramSDK) {
   }
 }
 
+function mountSwipeBehavior(sdk: TelegramSDK) {
+  try {
+    if (sdk.mountSwipeBehavior.isAvailable()) {
+      sdk.mountSwipeBehavior();
+    }
+    if (sdk.disableVerticalSwipes.isAvailable()) {
+      sdk.disableVerticalSwipes();
+    }
+  } catch {
+    // Swipe behavior not supported
+  }
+}
+
+function restoreInitDataAndLocale(sdk: TelegramSDK) {
+  try {
+    sdk.restoreInitData();
+  } catch {
+    // Init data may not be available
+  }
+
+  try {
+    const user = sdk.initDataUser();
+    if (user?.language_code) {
+      const locale = resolveLocale(user.language_code);
+      useLocaleStore.getState().setLocale(locale);
+    }
+  } catch {
+    // User data may not be available
+  }
+}
+
 async function initTelegram() {
   const sdk = await import("@telegram-apps/sdk-react");
-  const isTma = sdk.isTMA();
+  const isDev = process.env.NODE_ENV === "development";
 
-  if (isTma) {
-    initThemeAndCssVars(sdk);
-    await mountViewport(sdk);
-    if (sdk.miniApp.ready.isAvailable()) {
-      sdk.miniApp.ready();
+  // In development, set up mock environment with user data
+  if (isDev) {
+    try {
+      sdk.mockTelegramEnv({
+        launchParams: {
+          tgWebAppThemeParams: MOCK_THEME_PARAMS,
+          tgWebAppData: buildMockInitData(),
+          tgWebAppVersion: "8.0",
+          tgWebAppPlatform: "tdesktop",
+        },
+      });
+    } catch {
+      // Mock env may already be set from previous page load
     }
-  } else if (process.env.NODE_ENV === "development") {
-    sdk.mockTelegramEnv({
-      launchParams: {
-        tgWebAppThemeParams: MOCK_THEME_PARAMS,
-        tgWebAppVersion: "8.0",
-        tgWebAppPlatform: "tdesktop",
-      },
-    });
-    initThemeAndCssVars(sdk);
+  }
+
+  // Initialize SDK — skip in dev because sdk.init() interferes with React rendering
+  if (!isDev) {
+    sdk.init();
+    try {
+      sdk.themeParams.mountSync();
+      sdk.themeParams.bindCssVars();
+      document.documentElement.classList.add("tg-app");
+    } catch {
+      // Theme params not available
+    }
+  }
+
+  // Restore init data (critical for user info — must always run)
+  restoreInitDataAndLocale(sdk);
+
+  // Viewport + swipe + ready signal (only in real Telegram)
+  if (!isDev) {
+    try {
+      await mountViewport(sdk);
+      mountSwipeBehavior(sdk);
+      if (sdk.miniApp.ready.isAvailable()) {
+        sdk.miniApp.ready();
+      }
+    } catch {
+      // Viewport/swipe not available
+    }
   }
 }
 

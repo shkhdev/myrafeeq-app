@@ -1,0 +1,57 @@
+{
+  "common": {
+    "goBack": "رجوع",
+    "changeLanguage": "تغيير اللغة",
+    "sunrise": "الشروق",
+    "stepOf": "الخطوة {current} من {total}",
+    "checkmark": "علامة صح",
+    "success": "نجاح",
+    "onboardingComplete": "اكتمل الإعداد",
+    "homeComingSoon": "الشاشة الرئيسية قريباً"
+  },
+  "onboarding": {
+    "welcome": {
+      "greeting": "السلام عليكم، {name}!",
+      "skipButton": "تخطي",
+      "card1Title": "رفيقك الإسلامي",
+      "card1Description": "يساعدك MyRafeeq على البقاء متصلاً بإيمانك من خلال أوقات الصلاة وقراءة القرآن والتذكيرات اليومية.",
+      "card2Title": "لا تفوّت أي صلاة",
+      "card2Description": "احصل على أوقات صلاة دقيقة لموقعك وتذكيرات في الوقت المناسب.",
+      "card3Title": "ابنِ عادات أفضل",
+      "card3Description": "تابع ممارساتك اليومية وتقرّب إلى الله بإرشاد شخصي.",
+      "getStarted": "ابدأ الآن",
+      "tapToContinue": "اضغط للمتابعة"
+    },
+    "location": {
+      "title": "حدد موقعك",
+      "description": "نحتاج موقعك لحساب أوقات الصلاة بدقة.",
+      "privacyNote": "يُستخدم موقعك فقط لحساب أوقات الصلاة ولا تتم مشاركته.",
+      "enableLocation": "تفعيل الموقع",
+      "searchCity": "البحث عن مدينتك",
+      "searchPlaceholder": "ابحث عن المدن...",
+      "prayerTimesTitle": "أوقات الصلاة اليوم",
+      "continue": "متابعة",
+      "skip": "تخطي"
+    },
+    "notifications": {
+      "title": "تذكيرات الصلاة",
+      "description": "لا تفوّت أي صلاة مع الإشعارات في الوقت المناسب.",
+      "allPrayers": "جميع الصلوات",
+      "fajr": "الفجر",
+      "dhuhr": "الظهر",
+      "asr": "العصر",
+      "maghrib": "المغرب",
+      "isha": "العشاء",
+      "reminderTiming": "وقت التذكير",
+      "atPrayerTime": "عند وقت الصلاة",
+      "minutesBefore": "قبل {minutes} دقائق",
+      "completeSetup": "إكمال الإعداد",
+      "maybeLater": "ربما لاحقاً",
+      "enableReminders": "تفعيل التذكيرات"
+    },
+    "completion": {
+      "title": "ما شاء الله، كل شيء جاهز!",
+      "description": "رفيقك MyRafeeq جاهز. جعل الله رحلتك مباركة."
+    }
+  }
+}
