@@ -1,0 +1,42 @@
+/* ============================================
+   Islamic Seasonal Themes
+   Data-attribute overrides for liturgical seasons
+   Usage: <html data-season="ramadan">
+   ============================================ */
+
+/* ── Ramadan ── Deep spiritual greens + warm gold ── */
+[data-season="ramadan"] {
+  --sem-primary: oklch(0.42 0.1 155);
+  --sem-accent: oklch(0.75 0.14 85);
+  --sem-surface-secondary: oklch(0.97 0.01 85);
+}
+
+[data-season="ramadan"].dark {
+  --sem-primary: oklch(0.62 0.12 155);
+  --sem-accent: oklch(0.8 0.12 85);
+  --sem-surface-secondary: oklch(0.18 0.01 85);
+}
+
+/* ── Eid ── Celebratory gold emphasis ── */
+[data-season="eid"] {
+  --sem-primary: oklch(0.65 0.14 85);
+  --sem-accent: oklch(0.48 0.12 155);
+}
+
+[data-season="eid"].dark {
+  --sem-primary: oklch(0.78 0.12 85);
+  --sem-accent: oklch(0.68 0.14 155);
+}
+
+/* ── Hajj ── Reverent whites + deep blue ── */
+[data-season="hajj"] {
+  --sem-primary: oklch(0.42 0.1 255);
+  --sem-accent: oklch(0.72 0.12 85);
+  --sem-surface-secondary: oklch(0.97 0.01 255);
+}
+
+[data-season="hajj"].dark {
+  --sem-primary: oklch(0.58 0.12 255);
+  --sem-accent: oklch(0.8 0.1 85);
+  --sem-surface-secondary: oklch(0.16 0.01 255);
+}
