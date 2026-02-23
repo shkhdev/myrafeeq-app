@@ -51,11 +51,26 @@ export function IntlProvider({ children }: { children: React.ReactNode }) {
   useHtmlLangSync(activeLocale);
 
   useEffect(() => {
-    loadMessages(locale).then((msgs) => {
-      setMessages(msgs);
-      setActiveLocale(locale);
-      initialLoad.current = false;
-    });
+    loadMessages(locale)
+      .then((msgs) => {
+        setMessages(msgs);
+        setActiveLocale(locale);
+        initialLoad.current = false;
+      })
+      .catch(() => {
+        // Fallback to English if dynamic import fails
+        loadMessages("en")
+          .then((msgs) => {
+            setMessages(msgs);
+            setActiveLocale("en");
+            initialLoad.current = false;
+          })
+          .catch(() => {
+            // Last resort — render without i18n
+            initialLoad.current = false;
+            setMessages({});
+          });
+      });
   }, [locale]);
 
   // Block render only on initial load; keep previous messages during locale switch

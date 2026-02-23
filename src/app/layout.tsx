@@ -27,6 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.onerror=function(m,s,l,c,e){document.body.innerHTML='<pre style="color:red;padding:20px;word-break:break-all">'+m+'\\n'+s+':'+l+':'+c+'\\n'+(e&&e.stack||'')+'</pre>'};`,
+          }}
+        />
+      </head>
       <body className={`${inter.variable} antialiased`}>
         <AppProviders>{children}</AppProviders>
       </body>
