@@ -41,9 +41,16 @@ function buildMockInitData(): string {
   }).toString();
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms)),
+  ]);
+}
+
 async function mountViewport(sdk: TelegramSDK) {
   if (!sdk.viewport.mount.isAvailable()) return;
-  await sdk.viewport.mount();
+  await withTimeout(sdk.viewport.mount(), 2000);
   if (sdk.viewport.expand.isAvailable()) {
     sdk.viewport.expand();
   }
@@ -133,9 +140,9 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    initTelegram()
+    withTimeout(initTelegram(), 5000)
       .catch(() => {
-        // Not in Telegram — proceed with web defaults
+        // Not in Telegram or init timed out — proceed with web defaults
       })
       .finally(() => setReady(true));
   }, []);
