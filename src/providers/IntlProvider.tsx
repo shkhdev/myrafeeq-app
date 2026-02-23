@@ -14,9 +14,23 @@ const messageCache = new Map<SupportedLocale, Messages>();
 async function loadMessages(locale: SupportedLocale): Promise<Messages> {
   const cached = messageCache.get(locale);
   if (cached) return cached;
-  const mod = (await import(`../messages/${locale}.json`)) as {
-    default: Messages;
-  };
+
+  let mod: { default: Messages };
+  switch (locale) {
+    case "ar":
+      mod = (await import("../messages/ar.json")) as { default: Messages };
+      break;
+    case "ru":
+      mod = (await import("../messages/ru.json")) as { default: Messages };
+      break;
+    case "uz":
+      mod = (await import("../messages/uz.json")) as { default: Messages };
+      break;
+    default:
+      mod = (await import("../messages/en.json")) as { default: Messages };
+      break;
+  }
+
   messageCache.set(locale, mod.default);
   return mod.default;
 }
