@@ -16,6 +16,7 @@ export class ApiError extends Error {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = useAuthStore.getState().token;
   const headers: Record<string, string> = {
+    "ngrok-skip-browser-warning": "1",
     ...((options.headers as Record<string, string>) ?? {}),
   };
 
