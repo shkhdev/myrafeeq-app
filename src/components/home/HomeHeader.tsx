@@ -22,7 +22,7 @@ export function HomeHeader({ city }: HomeHeaderProps) {
   return (
     <div
       className="flex items-center justify-between px-5"
-      style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.75rem)" }}
+      style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.75rem)" }}
     >
       <div className="flex items-start gap-1.5">
         <div className="mt-0.5 shrink-0">

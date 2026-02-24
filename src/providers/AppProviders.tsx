@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AuthProvider } from "./AuthProvider";
 import { IntlProvider } from "./IntlProvider";
 import { QueryProvider } from "./QueryProvider";
 import { TelegramProvider } from "./TelegramProvider";
@@ -11,9 +12,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     <TelegramProvider>
       <ThemeProvider>
         <QueryProvider>
-          <IntlProvider>
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </IntlProvider>
+          <AuthProvider>
+            <IntlProvider>
+              <ErrorBoundary>{children}</ErrorBoundary>
+            </IntlProvider>
+          </AuthProvider>
         </QueryProvider>
       </ThemeProvider>
     </TelegramProvider>

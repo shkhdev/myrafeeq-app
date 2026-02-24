@@ -95,6 +95,9 @@
       "enableLocation": "Включить геолокацию",
       "searchCity": "Найти город",
       "searchPlaceholder": "Поиск городов...",
+      "searching": "Поиск...",
+      "noResults": "Города не найдены",
+      "typeToSearch": "Введите минимум 2 символа для поиска",
       "prayerTimesTitle": "Время намаза сегодня",
       "continue": "Продолжить",
       "skip": "Пропустить"

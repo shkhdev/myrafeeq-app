@@ -72,7 +72,7 @@ export function PrayerCalculationSettings() {
 
       {/* Inline method picker */}
       {showMethodPicker && (
-        <div className="max-h-60 overflow-y-auto border-b border-on-surface/5">
+        <div className="max-h-[40dvh] overflow-y-auto border-b border-on-surface/5">
           {CALCULATION_METHODS.map((method) => {
             const isSelected = calculationMethod === method.id;
             const isRecommended = method.id === recommended;

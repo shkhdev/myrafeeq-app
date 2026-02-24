@@ -54,6 +54,25 @@ async function mountViewport(sdk: TelegramSDK) {
   if (sdk.viewport.expand.isAvailable()) {
     sdk.viewport.expand();
   }
+  // Request safe area insets so bindCssVars can expose them
+  try {
+    if (sdk.requestSafeAreaInsets.isAvailable()) {
+      await sdk.requestSafeAreaInsets();
+    }
+  } catch {
+    // Safe area insets not supported
+  }
+  try {
+    if (sdk.requestContentSafeAreaInsets.isAvailable()) {
+      await sdk.requestContentSafeAreaInsets();
+    }
+  } catch {
+    // Content safe area insets not supported
+  }
+  // Bind all viewport CSS vars (height, width, safe area insets)
+  if (sdk.viewport.bindCssVars.isAvailable()) {
+    sdk.viewport.bindCssVars();
+  }
 }
 
 function mountSwipeBehavior(sdk: TelegramSDK) {

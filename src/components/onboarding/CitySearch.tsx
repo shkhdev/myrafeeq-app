@@ -2,8 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { searchCities } from "@/data/cities";
+import { useCitySearch } from "@/hooks/api/useCities";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useLocaleStore } from "@/stores/locale-store";
 import type { City } from "@/types/city";
 
 interface CitySearchProps {
@@ -13,8 +15,11 @@ interface CitySearchProps {
 export function CitySearch({ onSelect }: CitySearchProps) {
   const t = useTranslations("onboarding.location");
   const haptic = useHaptic();
+  const locale = useLocaleStore((s) => s.locale);
   const [query, setQuery] = useState("");
-  const cities = searchCities(query);
+  const debouncedQuery = useDebouncedValue(query, 300);
+  const { data, isLoading } = useCitySearch(debouncedQuery, locale.toUpperCase());
+  const cities = data?.cities ?? [];
 
   return (
     <div className="flex flex-col gap-3">
@@ -29,6 +34,20 @@ export function CitySearch({ onSelect }: CitySearchProps) {
       />
 
       <div className="max-h-72 overflow-y-auto rounded-xl bg-on-surface/5">
+        {isLoading && (
+          <p className="px-4 py-3 text-center text-xs text-on-surface-muted/70">{t("searching")}</p>
+        )}
+
+        {!isLoading && debouncedQuery.length >= 2 && cities.length === 0 && (
+          <p className="px-4 py-3 text-center text-xs text-on-surface-muted/70">{t("noResults")}</p>
+        )}
+
+        {!isLoading && debouncedQuery.length < 2 && (
+          <p className="px-4 py-3 text-center text-xs text-on-surface-muted/70">
+            {t("typeToSearch")}
+          </p>
+        )}
+
         {cities.map((city) => (
           <button
             key={city.id}

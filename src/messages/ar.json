@@ -95,6 +95,9 @@
       "enableLocation": "تفعيل الموقع",
       "searchCity": "البحث عن مدينتك",
       "searchPlaceholder": "ابحث عن المدن...",
+      "searching": "جارٍ البحث...",
+      "noResults": "لم يتم العثور على مدن",
+      "typeToSearch": "اكتب حرفين على الأقل للبحث",
       "prayerTimesTitle": "أوقات الصلاة اليوم",
       "continue": "متابعة",
       "skip": "تخطي"

@@ -8,6 +8,17 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
+  :root {
+    --safe-top: calc(
+      var(--tg-viewport-safe-area-inset-top, 0px) +
+      var(--tg-viewport-content-safe-area-inset-top, 0px)
+    );
+    --safe-bottom: calc(
+      var(--tg-viewport-safe-area-inset-bottom, 0px) +
+      var(--tg-viewport-content-safe-area-inset-bottom, 0px)
+    );
+  }
+
   body {
     background-color: var(--sem-surface);
     color: var(--sem-on-surface);

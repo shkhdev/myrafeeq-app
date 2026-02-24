@@ -120,7 +120,7 @@ export function LocationSetup() {
       >
         <div
           className="flex items-center justify-between px-3"
-          style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.5rem)" }}
+          style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
         >
           <BackArrow onClick={handleBack} />
           <StepIndicator current={2} total={4} />
@@ -149,7 +149,7 @@ export function LocationSetup() {
         {/* Top bar */}
         <div
           className="flex items-center justify-between px-3"
-          style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.5rem)" }}
+          style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
         >
           <BackArrow onClick={handleBack} />
           <StepIndicator current={2} total={4} />
@@ -209,7 +209,7 @@ export function LocationSetup() {
           {/* Continue button — pinned to bottom with safe area */}
           <div
             className="mt-auto pt-6"
-            style={{ paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 2rem)" }}
+            style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
           >
             <button
               type="button"
@@ -233,7 +233,7 @@ export function LocationSetup() {
       {/* Top bar: back + step indicator */}
       <div
         className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.5rem)" }}
+        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
       >
         <BackArrow onClick={handleBack} />
         <StepIndicator current={2} total={4} />
@@ -264,7 +264,7 @@ export function LocationSetup() {
       {/* Bottom buttons — pinned to bottom with safe area */}
       <div
         className="animate-fade-in-up-3 flex flex-col gap-3 px-6 pt-4"
-        style={{ paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 2rem)" }}
+        style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
       >
         <button
           type="button"

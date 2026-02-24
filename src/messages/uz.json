@@ -95,6 +95,9 @@
       "enableLocation": "Joylashuvni yoqish",
       "searchCity": "Shaharni qidirish",
       "searchPlaceholder": "Shaharlarni qidiring...",
+      "searching": "Qidirilmoqda...",
+      "noResults": "Shaharlar topilmadi",
+      "typeToSearch": "Qidirish uchun kamida 2 ta belgi kiriting",
       "prayerTimesTitle": "Bugungi namoz vaqtlari",
       "continue": "Davom etish",
       "skip": "O'tkazib yuborish"

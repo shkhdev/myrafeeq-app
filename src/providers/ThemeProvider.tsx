@@ -15,17 +15,30 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     // If inside Telegram, subscribe to Telegram's dark mode signal
     if (root.classList.contains("tg-app")) {
-      const bindTelegramTheme = async () => {
+      let unsub: (() => void) | undefined;
+      let cancelled = false;
+
+      (async () => {
         try {
           const sdk = await import("@telegram-apps/sdk-react");
-          const isDark = sdk.themeParams.isDark();
-          root.classList.toggle("dark", isDark);
+          if (cancelled) return;
+
+          // Apply initial value
+          root.classList.toggle("dark", sdk.themeParams.isDark());
+
+          // Subscribe to future theme changes
+          unsub = sdk.themeParams.isDark.sub((isDark) => {
+            root.classList.toggle("dark", isDark);
+          });
         } catch {
           // SDK not available — fall through to preference
         }
+      })();
+
+      return () => {
+        cancelled = true;
+        unsub?.();
       };
-      bindTelegramTheme();
-      return;
     }
 
     // Outside Telegram: use user preference or system

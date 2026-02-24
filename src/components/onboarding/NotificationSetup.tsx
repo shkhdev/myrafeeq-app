@@ -88,7 +88,7 @@ export function NotificationSetup() {
       {/* Top bar: back + step indicator */}
       <div
         className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.5rem)" }}
+        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
       >
         <BackArrow onClick={handleBack} />
         <StepIndicator current={3} total={4} />
@@ -163,7 +163,7 @@ export function NotificationSetup() {
       {/* Bottom buttons — safe area padding */}
       <div
         className="mt-auto flex flex-col gap-3 px-6 pt-6"
-        style={{ paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 2rem)" }}
+        style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
       >
         <button
           type="button"

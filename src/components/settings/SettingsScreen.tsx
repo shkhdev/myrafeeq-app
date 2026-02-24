@@ -24,32 +24,29 @@ export function SettingsScreen() {
 
   return (
     <div
-      className="flex flex-col overflow-y-auto bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
+      className="flex flex-col bg-surface"
+      style={{ height: "var(--tg-viewport-stable-height, 100dvh)" }}
     >
       {/* Header */}
       <div
-        className="flex items-center gap-2 px-3"
-        style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.5rem)" }}
+        className="shrink-0 flex items-center gap-2 px-3"
+        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
       >
         <BackArrow onClick={handleBack} />
         <h1 className="text-lg font-bold text-on-surface">{t("title")}</h1>
       </div>
 
-      {/* Settings sections */}
-      <div className="flex-1 px-5 pb-6">
+      {/* Settings sections — scrollable */}
+      <div
+        className="flex-1 overflow-y-auto px-5"
+        style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 1.5rem)" }}
+      >
         <LocationSettings />
         <PrayerCalculationSettings />
         <NotificationSettings />
         <AppearanceSettings />
         <AboutSection />
       </div>
-
-      {/* Bottom safe area */}
-      <div
-        className="shrink-0"
-        style={{ paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 1rem)" }}
-      />
     </div>
   );
 }

@@ -25,10 +25,7 @@ export function HomeScreen() {
       <PrayerHeroCard prayerTimes={prayerTimes} />
       <PrayerTimesList prayerTimes={prayerTimes} />
       {/* Bottom safe area padding */}
-      <div
-        className="shrink-0"
-        style={{ paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 1rem)" }}
-      />
+      <div className="shrink-0" style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 1rem)" }} />
     </div>
   );
 }

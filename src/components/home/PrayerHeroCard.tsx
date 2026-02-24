@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 import { getGradientStyle, getGradientTextColor } from "@/lib/prayer-gradients";
 import {
-  formatCountdown,
   formatTime12h,
   getCurrentPrayerPeriod,
   getMinutesUntil,
@@ -22,14 +21,14 @@ interface PrayerHeroCardProps {
 interface HeroState {
   currentPeriod: PrayerTimeSlot | null;
   nextPrayer: { name: PrayerTimeSlot; time: string } | null;
-  countdown: string;
+  minutesUntilNext: number;
 }
 
 function computeHeroState(times: PrayerTimes): HeroState {
   const currentPeriod = getCurrentPrayerPeriod(times);
   const nextPrayer = getNextPrayer(times);
-  const countdown = nextPrayer ? formatCountdown(getMinutesUntil(nextPrayer.time)) : "";
-  return { currentPeriod, nextPrayer, countdown };
+  const minutesUntilNext = nextPrayer ? getMinutesUntil(nextPrayer.time) : 0;
+  return { currentPeriod, nextPrayer, minutesUntilNext };
 }
 
 export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
@@ -47,7 +46,15 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
 
   const gradientSlot = state.currentPeriod ?? "isha";
   const textColor = getGradientTextColor();
-  const formatTime = timeFormat === "12h" ? formatTime12h : (t: string) => t;
+  const formatTime = timeFormat === "12h" ? formatTime12h : (v: string) => v;
+
+  function fmtCountdown(totalMinutes: number): string {
+    if (totalMinutes <= 0) return t("timeUntilMinutes", { minutes: 0 });
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours > 0) return t("timeUntil", { hours, minutes });
+    return t("timeUntilMinutes", { minutes });
+  }
 
   // Current period is a trackable prayer (not sunrise)
   const isCurrentAPrayer = state.currentPeriod && state.currentPeriod !== "sunrise";
@@ -64,9 +71,14 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
     >
       {allDone ? (
         <>
-          <p className="text-sm font-medium opacity-80">{t("allPrayersCompleted")}</p>
+          <p className="text-sm font-medium opacity-80">{t("activePrayer")}</p>
           <p className="mt-1 text-2xl font-bold">
             {tCommon("isha")} — {formatTime(prayerTimes.isha)}
+          </p>
+          <p className="mt-2 text-sm opacity-70">
+            {t("nextPrayer")}: {tCommon("fajr")}
+            {" · "}
+            {t("inTime", { time: fmtCountdown(getMinutesUntil(prayerTimes.fajr) + 24 * 60) })}
           </p>
         </>
       ) : isCurrentAPrayer && state.currentPeriod && state.nextPrayer ? (
@@ -77,16 +89,17 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
           </p>
           <p className="mt-2 text-sm opacity-70">
             {t("nextPrayer")}: {tCommon(state.nextPrayer.name)} {formatTime(state.nextPrayer.time)}
-            {state.countdown && ` · ${t("inTime", { time: state.countdown })}`}
+            {state.minutesUntilNext > 0 &&
+              ` · ${t("inTime", { time: fmtCountdown(state.minutesUntilNext) })}`}
           </p>
         </>
       ) : state.nextPrayer ? (
         <>
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium opacity-80">{t("nextPrayer")}</p>
-            {state.countdown && (
+            {state.minutesUntilNext > 0 && (
               <p className="text-sm font-medium opacity-80">
-                {t("inTime", { time: state.countdown })}
+                {t("inTime", { time: fmtCountdown(state.minutesUntilNext) })}
               </p>
             )}
           </div>
@@ -100,7 +113,6 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
           <p className="mt-1 text-2xl font-bold">
             {tCommon("fajr")} — {formatTime(prayerTimes.fajr)}
           </p>
-          <p className="mt-2 text-sm opacity-70">{t("allPrayersCompleted")}</p>
         </>
       )}
     </div>

@@ -95,6 +95,9 @@
       "enableLocation": "Enable Location",
       "searchCity": "Search for City",
       "searchPlaceholder": "Search cities...",
+      "searching": "Searching...",
+      "noResults": "No cities found",
+      "typeToSearch": "Type at least 2 characters to search",
       "prayerTimesTitle": "Today's Prayer Times",
       "continue": "Continue",
       "skip": "Skip"

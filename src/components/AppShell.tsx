@@ -43,12 +43,11 @@ export function AppShell() {
   useEffect(() => {
     cloudStorage
       .getItem("onboarding-complete")
-      .then((value) => {
+      .then(async (value) => {
         if (value === "true") {
+          const prefs = await cloudStorage.getItem("preferences");
+          if (prefs) hydratePreferencesFromCloud(prefs);
           setOnboardingDone(true);
-          cloudStorage.getItem("preferences").then((prefs) => {
-            if (prefs) hydratePreferencesFromCloud(prefs);
-          });
         }
       })
       .finally(() => setChecking(false));

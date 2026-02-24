@@ -239,7 +239,7 @@ export function StoryCards() {
       {/* Fixed top bar: progress + language + skip */}
       <div
         className="fixed inset-x-0 top-0 z-50"
-        style={{ paddingTop: "var(--tg-safe-area-inset-top, 0px)" }}
+        style={{ paddingTop: "var(--safe-top, 0px)" }}
         onPointerDown={(e) => e.stopPropagation()}
       >
         <div className="px-4 pt-3">
@@ -272,7 +272,7 @@ export function StoryCards() {
       <div
         key={cardKey}
         className="flex flex-1 flex-col items-center justify-center gap-6 px-6 pb-8"
-        style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 5.5rem)" }}
+        style={{ paddingTop: "calc(var(--safe-top, 0px) + 5.5rem)" }}
       >
         {/* Avatar (card 0 only) — integrated into the content flow */}
         {currentCard?.showAvatar && (
