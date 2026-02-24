@@ -1,7 +1,7 @@
 import { useTranslations } from "use-intl";
 
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
-import { getPrayerTimes } from "@/data/prayer-times";
+import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getPrayerIcon } from "@/lib/prayer-icons";
 import { formatTime12h } from "@/lib/prayer-time-utils";
@@ -24,7 +24,6 @@ export function NotificationSettings() {
   const t = useTranslations("settings");
   const tCommon = useTranslations("common");
   const haptic = useHaptic();
-  const city = usePreferencesStore((s) => s.city);
   const prayerNotifications = usePreferencesStore((s) => s.prayerNotifications);
   const reminderTiming = usePreferencesStore((s) => s.reminderTiming);
   const setPrayerNotification = usePreferencesStore((s) => s.setPrayerNotification);
@@ -32,7 +31,8 @@ export function NotificationSettings() {
   const setReminderTiming = usePreferencesStore((s) => s.setReminderTiming);
   const timeFormat = usePreferencesStore((s) => s.timeFormat);
 
-  const prayerTimes = city ? getPrayerTimes(city.id) : null;
+  const { data: prayerTimesData } = usePrayerTimes();
+  const prayerTimes = prayerTimesData?.[0]?.times ?? null;
   const allEnabled = PRAYER_NAMES.every((p) => prayerNotifications[p]);
   const formatTime = timeFormat === "12h" ? formatTime12h : (t: string) => t;
 

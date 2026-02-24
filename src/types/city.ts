@@ -4,4 +4,7 @@ export interface City {
   country: string;
   latitude: number;
   longitude: number;
+  timezone?: string;
+  defaultMethod?: string;
+  defaultMadhab?: string;
 }

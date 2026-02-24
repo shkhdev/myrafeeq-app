@@ -9,8 +9,11 @@ interface MainButtonOptions {
   onClick: () => void;
 }
 
-function unmountIfMounted(sdk: Awaited<ReturnType<typeof getSDK>>) {
+function hideAndUnmount(sdk: Awaited<ReturnType<typeof getSDK>>) {
   try {
+    if (sdk.setMainButtonParams.isAvailable()) {
+      sdk.setMainButtonParams({ isVisible: false });
+    }
     if (sdk.isMainButtonMounted()) {
       sdk.unmountMainButton();
     }
@@ -48,7 +51,7 @@ export function useMainButton({
         if (cancelled) return;
 
         if (!isVisible) {
-          unmountIfMounted(sdk);
+          hideAndUnmount(sdk);
           return;
         }
 
@@ -63,7 +66,7 @@ export function useMainButton({
       cancelled = true;
       offClick?.();
       getSDK()
-        .then(unmountIfMounted)
+        .then(hideAndUnmount)
         .catch(() => {});
     };
   }, [text, isVisible, isEnabled, hasShineEffect]);

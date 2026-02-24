@@ -23,7 +23,6 @@ import type {
 export function CompletionScreen() {
   const t = useTranslations("onboarding.completion");
   const tCommon = useTranslations("common");
-  const store = useOnboardingStore();
   const haptic = useHaptic();
   const completeOnboarding = useCompleteOnboarding();
   const hasMutated = useRef(false);
@@ -31,6 +30,15 @@ export function CompletionScreen() {
   useBackButton(null);
   useMainButton({ text: "", isVisible: false, onClick: () => {} });
 
+  // Navigate away after 2.5s regardless of API result
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      useOnboardingStore.getState().completeOnboarding();
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Submit onboarding data to backend (fire once)
   useEffect(() => {
     if (hasMutated.current) return;
     hasMutated.current = true;
@@ -39,7 +47,6 @@ export function CompletionScreen() {
 
     const { data } = useOnboardingStore.getState();
 
-    // Submit onboarding to backend
     completeOnboarding.mutate(
       {
         cityId: data.city?.id ?? "",
@@ -80,13 +87,7 @@ export function CompletionScreen() {
         },
       },
     );
-
-    const timer = setTimeout(() => {
-      store.completeOnboarding();
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, [haptic, store, completeOnboarding]);
+  }, [haptic, completeOnboarding]);
 
   return (
     <div

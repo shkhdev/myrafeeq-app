@@ -3,7 +3,7 @@ import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
-import { getPrayerTimes } from "@/data/prayer-times";
+import { usePrayerTimesByLocation } from "@/hooks/api/usePrayerTimes";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
 import { useIsTelegram } from "@/hooks/useIsTelegram";
@@ -32,7 +32,18 @@ export function NotificationSetup() {
   const { prayerNotifications, reminderTiming } = store.data;
 
   const selectedCity = store.data.city;
-  const prayerTimes = selectedCity ? getPrayerTimes(selectedCity.id) : null;
+  const prayerTimesOptions: { enabled: boolean; timezone?: string; method?: string } = {
+    enabled: selectedCity !== null,
+  };
+  if (selectedCity?.timezone) prayerTimesOptions.timezone = selectedCity.timezone;
+  if (selectedCity?.defaultMethod) prayerTimesOptions.method = selectedCity.defaultMethod;
+
+  const prayerTimesQuery = usePrayerTimesByLocation(
+    store.data.latitude ?? selectedCity?.latitude ?? 0,
+    store.data.longitude ?? selectedCity?.longitude ?? 0,
+    prayerTimesOptions,
+  );
+  const prayerTimes = prayerTimesQuery.data?.times ?? null;
 
   const handlePrayerToggle = useCallback(
     (prayer: PrayerName) => {

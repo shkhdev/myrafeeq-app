@@ -1,4 +1,4 @@
-import { getPrayerTimes } from "@/data/prayer-times";
+import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useMainButton } from "@/hooks/useMainButton";
 import { usePreferencesStore } from "@/stores/preferences-store";
@@ -9,7 +9,8 @@ import { PrayerTimesList } from "./PrayerTimesList";
 
 export function HomeScreen() {
   const city = usePreferencesStore((s) => s.city);
-  const prayerTimes = city ? getPrayerTimes(city.id) : getPrayerTimes("tashkent");
+  const { data } = usePrayerTimes();
+  const prayerTimes = data?.[0]?.times ?? null;
 
   useBackButton(null);
   useMainButton({ text: "", isVisible: false, onClick: () => {} });
@@ -20,8 +21,12 @@ export function HomeScreen() {
       style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
     >
       <HomeHeader city={city} />
-      <PrayerHeroCard prayerTimes={prayerTimes} />
-      <PrayerTimesList prayerTimes={prayerTimes} />
+      {prayerTimes && (
+        <>
+          <PrayerHeroCard prayerTimes={prayerTimes} />
+          <PrayerTimesList prayerTimes={prayerTimes} />
+        </>
+      )}
       {/* Bottom safe area padding */}
       <div className="shrink-0" style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 1rem)" }} />
     </div>

@@ -13,6 +13,7 @@ export function getPrayerTimesByLocation(params: {
   lon: number;
   date?: string;
   method?: string;
+  timezone?: string;
 }): Promise<PrayerTimesResponse> {
   return api.get<PrayerTimesResponse>("/api/prayer-times/by-location", params);
 }

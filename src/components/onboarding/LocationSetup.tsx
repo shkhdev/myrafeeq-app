@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "use-intl";
 import { SunriseIcon } from "@/components/icons/prayer";
 import { BackArrow } from "@/components/ui/BackArrow";
@@ -6,8 +6,8 @@ import { CheckIcon } from "@/components/ui/CheckIcon";
 import { LocationPinIcon } from "@/components/ui/LocationPinIcon";
 import { LockIcon } from "@/components/ui/LockIcon";
 import { SpinnerIcon } from "@/components/ui/SpinnerIcon";
-import { findCityByCoords } from "@/data/cities";
-import { getPrayerTimes } from "@/data/prayer-times";
+import { useNearestCity } from "@/hooks/api/useCities";
+import { usePrayerTimesByLocation } from "@/hooks/api/usePrayerTimes";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
 import { useIsTelegram } from "@/hooks/useIsTelegram";
@@ -34,20 +34,42 @@ export function LocationSetup() {
   const haptic = useHaptic();
   const isTelegram = useIsTelegram();
   const [state, setState] = useState<LocationState>("initial");
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
 
-  const resolveLocation = useCallback(
-    (lat: number, lng: number) => {
-      const city = findCityByCoords(lat, lng);
-      if (city) {
-        store.setCity(city, lat, lng);
-        haptic.notification("success");
-        setState("success");
-      } else {
-        setState("manual");
-      }
-    },
-    [store, haptic],
+  // Fetch nearest city from API when coords are available
+  const nearestCityQuery = useNearestCity(
+    coords?.lat ?? 0,
+    coords?.lon ?? 0,
+    coords !== null && state === "requesting",
   );
+
+  // When nearest city resolves, store it and transition to success
+  useEffect(() => {
+    if (nearestCityQuery.data) {
+      const city = nearestCityQuery.data.city;
+      store.setCity(city, coords?.lat, coords?.lon);
+      haptic.notification("success");
+      setState("success");
+    } else if (nearestCityQuery.isError) {
+      setState("manual");
+    }
+  }, [nearestCityQuery.data, nearestCityQuery.isError, store, haptic, coords]);
+
+  const selectedCity = store.data.city;
+
+  // Fetch real prayer times from API for the selected city
+  const prayerTimesOptions: { enabled: boolean; timezone?: string; method?: string } = {
+    enabled: state === "success" && selectedCity !== null,
+  };
+  if (selectedCity?.timezone) prayerTimesOptions.timezone = selectedCity.timezone;
+  if (selectedCity?.defaultMethod) prayerTimesOptions.method = selectedCity.defaultMethod;
+
+  const prayerTimesQuery = usePrayerTimesByLocation(
+    store.data.latitude ?? selectedCity?.latitude ?? 0,
+    store.data.longitude ?? selectedCity?.longitude ?? 0,
+    prayerTimesOptions,
+  );
+  const prayerTimes = prayerTimesQuery.data?.times ?? null;
 
   const handleLocationRequest = useCallback(async () => {
     setState("requesting");
@@ -60,7 +82,7 @@ export function LocationSetup() {
       }
       if (sdk.requestLocation.isAvailable()) {
         const location = await sdk.requestLocation();
-        resolveLocation(location.latitude, location.longitude);
+        setCoords({ lat: location.latitude, lon: location.longitude });
         return;
       }
     } catch {
@@ -70,14 +92,14 @@ export function LocationSetup() {
     // 2) Fallback to browser geolocation (standalone web / dev)
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => resolveLocation(pos.coords.latitude, pos.coords.longitude),
+        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
         () => setState("manual"),
         { enableHighAccuracy: false, timeout: 10000 },
       );
     } else {
       setState("manual");
     }
-  }, [resolveLocation]);
+  }, []);
 
   const handleCitySelect = useCallback(
     (city: City) => {
@@ -108,9 +130,6 @@ export function LocationSetup() {
     onClick: handleContinue,
   });
 
-  const selectedCity = store.data.city;
-  const prayerTimes = selectedCity ? getPrayerTimes(selectedCity.id) : null;
-
   // ── Manual city search ──
   if (state === "manual") {
     return (
@@ -140,7 +159,7 @@ export function LocationSetup() {
   }
 
   // ── Success — city found, show prayer times ──
-  if (state === "success" && selectedCity && prayerTimes) {
+  if (state === "success" && selectedCity) {
     return (
       <div
         className="flex flex-col bg-surface"
@@ -173,37 +192,42 @@ export function LocationSetup() {
 
           {/* Prayer times card */}
           <div className="animate-fade-in-up-1 mt-5 overflow-hidden rounded-2xl bg-on-surface/5 ring-1 ring-on-surface/10">
-            {/* Five fard prayers with sunrise between Fajr and Dhuhr */}
-            <div className="divide-y divide-on-surface/5">
-              {PRAYER_ORDER.map((prayer, i) => {
-                const Icon = getPrayerIcon(prayer);
-                return (
-                  <div key={prayer}>
-                    <div className="flex min-h-[48px] items-center justify-between px-4 py-3">
-                      <span className="flex items-center gap-3 text-[15px] font-medium text-on-surface">
-                        <Icon size={32} />
-                        {tPrayers(prayer)}
-                      </span>
-                      <span className="text-[15px] font-semibold tabular-nums text-on-surface">
-                        {prayerTimes[prayer]}
-                      </span>
-                    </div>
-                    {/* Sunrise row — between Fajr and Dhuhr */}
-                    {i === 0 && (
-                      <div className="flex min-h-[40px] items-center justify-between border-t border-on-surface/5 bg-on-surface/[0.02] px-4 py-2">
-                        <span className="flex items-center gap-3 text-xs font-medium text-on-surface-muted/70">
-                          <SunriseIcon size={24} />
-                          {tCommon("sunrise")}
+            {prayerTimesQuery.isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <SpinnerIcon />
+              </div>
+            ) : prayerTimes ? (
+              <div className="divide-y divide-on-surface/5">
+                {PRAYER_ORDER.map((prayer, i) => {
+                  const Icon = getPrayerIcon(prayer);
+                  return (
+                    <div key={prayer}>
+                      <div className="flex min-h-[48px] items-center justify-between px-4 py-3">
+                        <span className="flex items-center gap-3 text-[15px] font-medium text-on-surface">
+                          <Icon size={32} />
+                          {tPrayers(prayer)}
                         </span>
-                        <span className="text-xs tabular-nums text-on-surface-muted/70">
-                          {prayerTimes.sunrise}
+                        <span className="text-[15px] font-semibold tabular-nums text-on-surface">
+                          {prayerTimes[prayer]}
                         </span>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                      {/* Sunrise row — between Fajr and Dhuhr */}
+                      {i === 0 && (
+                        <div className="flex min-h-[40px] items-center justify-between border-t border-on-surface/5 bg-on-surface/[0.02] px-4 py-2">
+                          <span className="flex items-center gap-3 text-xs font-medium text-on-surface-muted/70">
+                            <SunriseIcon size={24} />
+                            {tCommon("sunrise")}
+                          </span>
+                          <span className="text-xs tabular-nums text-on-surface-muted/70">
+                            {prayerTimes.sunrise}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           {/* Continue button — pinned to bottom with safe area (hidden inside Telegram where Main Button is used) */}
