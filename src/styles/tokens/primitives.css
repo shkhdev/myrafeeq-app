@@ -27,7 +27,7 @@
   --blue-900: oklch(0.3 0.08 255);
 
   /* ── Font Family ── */
-  --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* ── Border Radii ── */
   --radius-sm: 0.25rem;
