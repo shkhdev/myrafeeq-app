@@ -1,8 +1,6 @@
-"use client";
+import { lazy, Suspense } from "react";
 
-import dynamic from "next/dynamic";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+const Lottie = lazy(() => import("lottie-react"));
 
 interface LottieAnimationProps {
   data: object | null;
@@ -16,5 +14,9 @@ export function LottieAnimation({
   className = "h-48 w-48",
 }: LottieAnimationProps) {
   if (!data) return <div className={className} />;
-  return <Lottie animationData={data} loop={loop} className={className} />;
+  return (
+    <Suspense fallback={<div className={className} />}>
+      <Lottie animationData={data} loop={loop} className={className} />
+    </Suspense>
+  );
 }

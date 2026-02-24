@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface AuthState {
   token: string | null;
@@ -10,17 +9,12 @@ interface AuthState {
   clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      token: null,
-      telegramId: null,
-      onboardingCompleted: false,
-      setAuth: (token, telegramId, onboardingCompleted) =>
-        set({ token, telegramId, onboardingCompleted }),
-      setOnboardingCompleted: (onboardingCompleted) => set({ onboardingCompleted }),
-      clearAuth: () => set({ token: null, telegramId: null, onboardingCompleted: false }),
-    }),
-    { name: "myrafeeq-auth" },
-  ),
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  token: null,
+  telegramId: null,
+  onboardingCompleted: false,
+  setAuth: (token, telegramId, onboardingCompleted) =>
+    set({ token, telegramId, onboardingCompleted }),
+  setOnboardingCompleted: (onboardingCompleted) => set({ onboardingCompleted }),
+  clearAuth: () => set({ token: null, telegramId: null, onboardingCompleted: false }),
+}));

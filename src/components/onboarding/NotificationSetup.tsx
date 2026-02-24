@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useCallback } from "react";
+import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";

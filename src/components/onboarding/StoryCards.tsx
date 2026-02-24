@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "use-intl";
 
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";

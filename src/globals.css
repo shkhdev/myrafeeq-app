@@ -1,9 +1,9 @@
 @import "tailwindcss";
-@import "../styles/tokens/primitives.css";
-@import "../styles/tokens/typography.css";
-@import "../styles/tokens/semantic.css";
-@import "../styles/themes/telegram.css";
-@import "../styles/themes/islamic.css";
+@import "./styles/tokens/primitives.css";
+@import "./styles/tokens/typography.css";
+@import "./styles/tokens/semantic.css";
+@import "./styles/themes/telegram.css";
+@import "./styles/themes/islamic.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

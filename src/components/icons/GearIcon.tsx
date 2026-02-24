@@ -1,5 +1,3 @@
-"use client";
-
 interface GearIconProps {
   size?: number;
 }

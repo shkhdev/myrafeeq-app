@@ -1,5 +1,3 @@
-"use client";
-
 interface SpinnerIconProps {
   className?: string;
 }

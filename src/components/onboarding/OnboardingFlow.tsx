@@ -1,5 +1,3 @@
-"use client";
-
 import { useOnboardingStore } from "@/stores/onboarding-store";
 
 import { CompletionScreen } from "./CompletionScreen";

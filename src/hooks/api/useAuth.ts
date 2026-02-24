@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation } from "@tanstack/react-query";
 import { validateTelegramAuth } from "@/lib/api/auth";
 import { useAuthStore } from "@/stores/auth-store";

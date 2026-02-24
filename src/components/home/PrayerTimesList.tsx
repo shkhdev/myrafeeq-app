@@ -1,7 +1,6 @@
-"use client";
+import { useTranslations } from "use-intl";
 
-import { useTranslations } from "next-intl";
-
+import { usePrayerTracking, useTogglePrayer } from "@/hooks/api/usePrayerTracking";
 import { useHaptic } from "@/hooks/useHaptic";
 import {
   ALL_PRAYER_SLOTS,
@@ -9,8 +8,7 @@ import {
   getTodayDate,
   type PrayerTimeSlot,
 } from "@/lib/prayer-time-utils";
-import { usePrayerTrackingStore } from "@/stores/prayer-tracking-store";
-import type { PrayerTimes } from "@/types/prayer";
+import type { PrayerName, PrayerTimes } from "@/types/prayer";
 import { PRAYER_NAMES } from "@/types/prayer";
 
 import { PrayerRow } from "./PrayerRow";
@@ -31,8 +29,18 @@ export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
   const haptic = useHaptic();
   const today = getTodayDate();
   const currentPeriod = getCurrentPrayerPeriod(prayerTimes);
-  const tracking = usePrayerTrackingStore();
-  const prayedCount = tracking.getPrayedCount(today);
+
+  const { data: trackingData } = usePrayerTracking(today);
+  const toggleMutation = useTogglePrayer();
+
+  const todayTracking = trackingData?.tracking[today] ?? {};
+  const isPrayed = (prayer: PrayerName) => todayTracking[prayer] === true;
+  const prayedCount = PRAYER_NAMES.filter((p) => isPrayed(p)).length;
+
+  const handleToggle = (prayer: PrayerName) => {
+    toggleMutation.mutate({ date: today, prayer, prayed: !isPrayed(prayer) });
+    haptic.selectionChanged();
+  };
 
   return (
     <div className="animate-fade-in-up-1 mx-5 mt-4">
@@ -53,12 +61,9 @@ export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
               time={prayerTimes[prayer]}
               isActive={currentPeriod === prayer}
               isPast={isPrayerPast(prayer, currentPeriod)}
-              isPrayed={tracking.isPrayed(today, prayer)}
+              isPrayed={isPrayed(prayer)}
               isLast={false}
-              onToggle={() => {
-                tracking.togglePrayer(today, prayer);
-                haptic.selectionChanged();
-              }}
+              onToggle={() => handleToggle(prayer)}
             />
             {/* Sunrise row between Fajr and Dhuhr */}
             {i === 0 && (

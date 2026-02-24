@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
 import { useHaptic } from "@/hooks/useHaptic";

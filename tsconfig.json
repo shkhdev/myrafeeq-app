@@ -10,7 +10,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "incremental": true,
     "noEmit": true,
 
     /* Strict type-checking */
@@ -23,22 +22,10 @@
     "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true,
 
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
+  "include": ["src", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }

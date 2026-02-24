@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
 import { getPrayerTimes } from "@/data/prayer-times";

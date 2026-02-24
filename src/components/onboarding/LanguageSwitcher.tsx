@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "use-intl";
 
 import { useHaptic } from "@/hooks/useHaptic";
 import type { SupportedLocale } from "@/i18n/locale";

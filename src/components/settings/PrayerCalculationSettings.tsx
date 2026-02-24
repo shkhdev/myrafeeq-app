@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useTranslations } from "use-intl";
 
 import { getRecommendedMethod } from "@/data/calculation-methods";
 import { useHaptic } from "@/hooks/useHaptic";

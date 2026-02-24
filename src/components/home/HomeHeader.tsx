@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 import { GearIcon } from "@/components/icons/GearIcon";
 import { LocationPinIcon } from "@/components/ui/LocationPinIcon";

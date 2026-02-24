@@ -1,5 +1,3 @@
-"use client";
-
 interface CheckIconProps {
   size?: number;
   className?: string;

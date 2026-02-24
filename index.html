@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>MyRafeeq</title>
+    <meta name="description" content="Your Islamic companion" />
+    <link rel="icon" href="/favicon.ico" />
+    <script>
+      window.onerror = (m, s, l, c, e) => {
+        document.body.innerHTML =
+          '<pre style="color:red;padding:20px;word-break:break-all">' +
+          m +
+          "\n" +
+          s +
+          ":" +
+          l +
+          ":" +
+          c +
+          "\n" +
+          ((e && e.stack) || "") +
+          "</pre>";
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

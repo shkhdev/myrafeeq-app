@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
+import { useTranslations } from "use-intl";
 import { SunriseIcon } from "@/components/icons/prayer";
 import { BackArrow } from "@/components/ui/BackArrow";
 import { CheckIcon } from "@/components/ui/CheckIcon";

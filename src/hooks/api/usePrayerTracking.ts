@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPrayerStats, getPrayerTracking, togglePrayer } from "@/lib/api/prayer-tracking";
 import type { PrayerTrackingResponse } from "@/types/api";

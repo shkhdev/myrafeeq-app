@@ -1,5 +1,3 @@
-"use client";
-
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 

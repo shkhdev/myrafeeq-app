@@ -1,5 +1,3 @@
-"use client";
-
 import { getPrayerTimes } from "@/data/prayer-times";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useMainButton } from "@/hooks/useMainButton";

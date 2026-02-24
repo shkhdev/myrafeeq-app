@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useTranslations } from "use-intl";
 import { useCitySearch } from "@/hooks/api/useCities";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useHaptic } from "@/hooks/useHaptic";

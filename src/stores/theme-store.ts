@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 export type ThemePreference = "light" | "dark" | "system";
 
@@ -8,12 +7,7 @@ interface ThemeState {
   setPreference: (preference: ThemePreference) => void;
 }
 
-export const useThemeStore = create<ThemeState>()(
-  persist(
-    (set) => ({
-      preference: "system",
-      setPreference: (preference) => set({ preference }),
-    }),
-    { name: "myrafeeq-theme" },
-  ),
-);
+export const useThemeStore = create<ThemeState>()((set) => ({
+  preference: "system",
+  setPreference: (preference) => set({ preference }),
+}));

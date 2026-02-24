@@ -1,7 +1,5 @@
-"use client";
-
-import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { useTranslations } from "use-intl";
 
 import { getGradientStyle, getGradientTextColor } from "@/lib/prayer-gradients";
 import {
