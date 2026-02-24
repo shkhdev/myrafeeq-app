@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "use-intl";
 import { SunriseIcon } from "@/components/icons/prayer";
 import { BackArrow } from "@/components/ui/BackArrow";
@@ -6,13 +6,13 @@ import { CheckIcon } from "@/components/ui/CheckIcon";
 import { LocationPinIcon } from "@/components/ui/LocationPinIcon";
 import { LockIcon } from "@/components/ui/LockIcon";
 import { SpinnerIcon } from "@/components/ui/SpinnerIcon";
-import { useNearestCity } from "@/hooks/api/useCities";
 import { usePrayerTimesByLocation } from "@/hooks/api/usePrayerTimes";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
 import { useIsTelegram } from "@/hooks/useIsTelegram";
 import { useMainButton } from "@/hooks/useMainButton";
 import { getSDK } from "@/hooks/useTelegramSDK";
+import { getNearestCity } from "@/lib/api/cities";
 import { getPrayerIcon } from "@/lib/prayer-icons";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 import type { City } from "@/types/city";
@@ -34,26 +34,6 @@ export function LocationSetup() {
   const haptic = useHaptic();
   const isTelegram = useIsTelegram();
   const [state, setState] = useState<LocationState>("initial");
-  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
-
-  // Fetch nearest city from API when coords are available
-  const nearestCityQuery = useNearestCity(
-    coords?.lat ?? 0,
-    coords?.lon ?? 0,
-    coords !== null && state === "requesting",
-  );
-
-  // When nearest city resolves, store it and transition to success
-  useEffect(() => {
-    if (nearestCityQuery.data) {
-      const city = nearestCityQuery.data.city;
-      store.setCity(city, coords?.lat, coords?.lon);
-      haptic.notification("success");
-      setState("success");
-    } else if (nearestCityQuery.isError) {
-      setState("manual");
-    }
-  }, [nearestCityQuery.data, nearestCityQuery.isError, store, haptic, coords]);
 
   const selectedCity = store.data.city;
 
@@ -71,6 +51,20 @@ export function LocationSetup() {
   );
   const prayerTimes = prayerTimesQuery.data?.times ?? null;
 
+  const resolveCoords = useCallback(
+    async (lat: number, lon: number) => {
+      try {
+        const result = await getNearestCity({ lat, lon });
+        store.setCity(result.city, lat, lon);
+        haptic.notification("success");
+        setState("success");
+      } catch {
+        setState("manual");
+      }
+    },
+    [store, haptic],
+  );
+
   const handleLocationRequest = useCallback(async () => {
     setState("requesting");
 
@@ -82,7 +76,7 @@ export function LocationSetup() {
       }
       if (sdk.requestLocation.isAvailable()) {
         const location = await sdk.requestLocation();
-        setCoords({ lat: location.latitude, lon: location.longitude });
+        resolveCoords(location.latitude, location.longitude);
         return;
       }
     } catch {
@@ -92,14 +86,14 @@ export function LocationSetup() {
     // 2) Fallback to browser geolocation (standalone web / dev)
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        (pos) => resolveCoords(pos.coords.latitude, pos.coords.longitude),
         () => setState("manual"),
         { enableHighAccuracy: false, timeout: 10000 },
       );
     } else {
       setState("manual");
     }
-  }, []);
+  }, [resolveCoords]);
 
   const handleCitySelect = useCallback(
     (city: City) => {

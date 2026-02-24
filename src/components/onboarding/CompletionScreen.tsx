@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "use-intl";
 
 import { CheckIcon } from "@/components/ui/CheckIcon";
@@ -25,18 +26,11 @@ export function CompletionScreen() {
   const tCommon = useTranslations("common");
   const haptic = useHaptic();
   const completeOnboarding = useCompleteOnboarding();
+  const queryClient = useQueryClient();
   const hasMutated = useRef(false);
 
   useBackButton(null);
   useMainButton({ text: "", isVisible: false, onClick: () => {} });
-
-  // Navigate away after 2.5s regardless of API result
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      useOnboardingStore.getState().completeOnboarding();
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Submit onboarding data to backend (fire once)
   useEffect(() => {
@@ -84,10 +78,24 @@ export function CompletionScreen() {
           }
 
           useAuthStore.getState().setOnboardingCompleted(true);
+
+          // Invalidate prayer-times so HomeScreen fetches fresh data
+          queryClient.invalidateQueries({ queryKey: ["prayer-times"] });
+
+          // Navigate to home after a brief delay for the animation
+          setTimeout(() => {
+            useOnboardingStore.getState().completeOnboarding();
+          }, 1500);
+        },
+        onError: () => {
+          // Even on error, eventually navigate to home (fallback)
+          setTimeout(() => {
+            useOnboardingStore.getState().completeOnboarding();
+          }, 2500);
         },
       },
     );
-  }, [haptic, completeOnboarding]);
+  }, [haptic, completeOnboarding, queryClient]);
 
   return (
     <div

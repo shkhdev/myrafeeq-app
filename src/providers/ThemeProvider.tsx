@@ -10,9 +10,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
+    const isTelegram = root.classList.contains("tg-app");
 
-    // If inside Telegram, subscribe to Telegram's dark mode signal
-    if (root.classList.contains("tg-app")) {
+    // Explicit light/dark — applies everywhere (Telegram and standalone)
+    if (preference === "light") {
+      root.classList.remove("dark");
+      return;
+    }
+    if (preference === "dark") {
+      root.classList.add("dark");
+      return;
+    }
+
+    // "system" preference
+    if (isTelegram) {
+      // Inside Telegram: follow Telegram's dark mode signal
       let unsub: (() => void) | undefined;
       let cancelled = false;
 
@@ -21,15 +33,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           const sdk = await import("@telegram-apps/sdk-react");
           if (cancelled) return;
 
-          // Apply initial value
           root.classList.toggle("dark", sdk.themeParams.isDark());
 
-          // Subscribe to future theme changes
           unsub = sdk.themeParams.isDark.sub((isDark) => {
             root.classList.toggle("dark", isDark);
           });
         } catch {
-          // SDK not available — fall through to preference
+          // SDK not available — use OS media query as fallback
+          root.classList.toggle("dark", getSystemDark());
         }
       })();
 
@@ -39,13 +50,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    // Outside Telegram: use user preference or system
-    const shouldBeDark = preference === "dark" || (preference === "system" && getSystemDark());
-    root.classList.toggle("dark", shouldBeDark);
+    // Outside Telegram: follow OS preference
+    root.classList.toggle("dark", getSystemDark());
 
-    if (preference !== "system") return;
-
-    // Listen for system theme changes when preference is "system"
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
       root.classList.toggle("dark", e.matches);

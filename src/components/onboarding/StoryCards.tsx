@@ -103,11 +103,12 @@ export function StoryCards() {
       setProgress(p);
 
       if (p >= 1) {
+        if (timerRef.current) clearInterval(timerRef.current);
         if (currentIndex < TOTAL_CARDS - 1) {
+          setProgress(0);
+          pausedProgressRef.current = 0;
           store.setStoryCardIndex(currentIndex + 1);
           setCardKey((k) => k + 1);
-        } else if (timerRef.current) {
-          clearInterval(timerRef.current);
         }
       }
     }, TICK_MS);
