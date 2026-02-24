@@ -104,12 +104,36 @@ function restoreInitDataAndLocale(sdk: TelegramSDK) {
   }
 }
 
+/**
+ * Detect if we're inside a real Telegram WebView by checking
+ * if valid launch params exist (URL hash, performance entries, or localStorage).
+ */
+function isRealTelegramEnv(sdk: TelegramSDK): boolean {
+  try {
+    sdk.retrieveRawLaunchParams();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Module-level flag to prevent double-initialization in React strict mode
+let initialized = false;
+
 async function initTelegram() {
+  if (initialized) return;
+  initialized = true;
+
   const sdk = await import("@telegram-apps/sdk-react");
   const isDev = process.env.NODE_ENV === "development";
 
-  // In development, set up mock environment with user data
-  if (isDev) {
+  // Check if we're inside a real Telegram WebView BEFORE deciding to mock.
+  // This prevents mock data from overriding real Telegram data when
+  // running `npm run dev` through ngrok and testing inside Telegram.
+  const isTelegram = isRealTelegramEnv(sdk);
+
+  if (isDev && !isTelegram) {
+    // Local browser development only — mock the Telegram environment
     try {
       sdk.mockTelegramEnv({
         launchParams: {
@@ -124,40 +148,30 @@ async function initTelegram() {
     }
   }
 
-  // Initialize SDK — skip in dev because sdk.init() interferes with React rendering
-  if (!isDev) {
-    let initOk = false;
-    try {
-      sdk.init();
-      initOk = true;
-    } catch {
-      // SDK init may fail — continue to restore init data
-    }
+  // Always call init() — required for SDK signals and components to work.
+  // Without init(), restoreInitData() and initDataRaw() won't function.
+  try {
+    sdk.init();
+  } catch {
+    // May fail if already initialized or env not available
+  }
 
-    // Mark as Telegram app if launch params are available (even if init() failed)
+  // Mark as Telegram app and mount theme
+  if (isTelegram) {
+    document.documentElement.classList.add("tg-app");
     try {
-      sdk.retrieveRawLaunchParams();
-      document.documentElement.classList.add("tg-app");
+      sdk.themeParams.mountSync();
+      sdk.themeParams.bindCssVars();
     } catch {
-      // Not in Telegram
-    }
-
-    // Mount theme if init succeeded
-    if (initOk) {
-      try {
-        sdk.themeParams.mountSync();
-        sdk.themeParams.bindCssVars();
-      } catch {
-        // Theme params not available
-      }
+      // Theme params not available
     }
   }
 
-  // Restore init data (critical for user info — must always run)
+  // Restore init data (critical for user info and auth — must always run)
   restoreInitDataAndLocale(sdk);
 
   // Viewport + swipe + ready signal (only in real Telegram)
-  if (!isDev) {
+  if (isTelegram) {
     try {
       await mountViewport(sdk);
       mountSwipeBehavior(sdk);

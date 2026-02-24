@@ -41,7 +41,6 @@ export function StoryCards() {
   const [userInfo, setUserInfo] = useState<UserInfo>({ firstName: "", photoUrl: null });
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [showTapHint, setShowTapHint] = useState(false);
   const [cardKey, setCardKey] = useState(0);
 
   const currentIndex = store.storyCardIndex;
@@ -50,7 +49,6 @@ export function StoryCards() {
   const pausedProgressRef = useRef(0);
   const pointerStartX = useRef(0);
   const pointerStartY = useRef(0);
-  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load Telegram user info
   useEffect(() => {
@@ -68,17 +66,6 @@ export function StoryCards() {
       }
     });
   }, []);
-
-  // Show "tap to continue" hint after 2s on non-final cards
-  useEffect(() => {
-    setShowTapHint(false);
-    if (currentIndex < TOTAL_CARDS - 1) {
-      hintTimerRef.current = setTimeout(() => setShowTapHint(true), 2000);
-    }
-    return () => {
-      if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
-    };
-  }, [currentIndex]);
 
   // Auto-advance timer (also resets progress on card change)
   useEffect(() => {
@@ -101,7 +88,6 @@ export function StoryCards() {
       if (p >= 1) {
         if (timerRef.current) clearInterval(timerRef.current);
         if (currentIndex < TOTAL_CARDS - 1) {
-          setShowTapHint(false);
           setProgress(0);
           pausedProgressRef.current = 0;
           store.setStoryCardIndex(currentIndex + 1);
@@ -118,7 +104,6 @@ export function StoryCards() {
   const goToCard = useCallback(
     (index: number) => {
       if (index >= 0 && index < TOTAL_CARDS) {
-        setShowTapHint(false);
         store.setStoryCardIndex(index);
         setProgress(0);
         pausedProgressRef.current = 0;
@@ -306,18 +291,6 @@ export function StoryCards() {
           </button>
         )}
 
-        {/* Tap hint on non-final cards — always in DOM to avoid layout shift */}
-        {!isLastCard && (
-          <p
-            className="text-xs text-on-surface-muted/70 transition-opacity duration-500"
-            style={{
-              opacity: showTapHint ? 1 : 0,
-              animation: showTapHint ? "pulseGlow 2s ease-in-out infinite" : "none",
-            }}
-          >
-            {t("tapToContinue")}
-          </p>
-        )}
       </div>
     </div>
   );
