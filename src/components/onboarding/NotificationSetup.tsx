@@ -121,7 +121,9 @@ export function NotificationSetup() {
               </span>
               <span className="flex items-center gap-3">
                 {prayerTimes && (
-                  <span className="text-xs tabular-nums text-on-surface-muted/70">{prayerTimes[prayer]}</span>
+                  <span className="text-xs tabular-nums text-on-surface-muted/70">
+                    {prayerTimes[prayer]}
+                  </span>
                 )}
                 <ToggleSwitch checked={prayerNotifications[prayer]} />
               </span>
@@ -132,7 +134,9 @@ export function NotificationSetup() {
 
       {/* Reminder timing — horizontal scroll */}
       <div className="animate-fade-in-up-2 mt-4 ps-6">
-        <h3 className="mb-2.5 text-sm font-semibold text-on-surface-muted">{t("reminderTiming")}</h3>
+        <h3 className="mb-2.5 text-sm font-semibold text-on-surface-muted">
+          {t("reminderTiming")}
+        </h3>
         <div className="no-scrollbar flex gap-2 overflow-x-auto pe-6">
           {REMINDER_OPTIONS.map((option) => {
             const isSelected = reminderTiming === option.value;

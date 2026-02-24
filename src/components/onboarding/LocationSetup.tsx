@@ -128,7 +128,9 @@ export function LocationSetup() {
         </div>
         <div className="px-6 pt-2">
           <h2 className="animate-fade-in-up text-xl font-bold text-on-surface">{t("title")}</h2>
-          <p className="animate-fade-in-up-1 mt-2 text-sm text-on-surface-muted">{t("description")}</p>
+          <p className="animate-fade-in-up-1 mt-2 text-sm text-on-surface-muted">
+            {t("description")}
+          </p>
           <div className="animate-fade-in-up-2 mt-6">
             <CitySearch onSelect={handleCitySelect} />
           </div>

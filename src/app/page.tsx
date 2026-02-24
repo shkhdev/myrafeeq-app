@@ -1,5 +1,5 @@
-import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { AppShell } from "@/components/AppShell";
 
 export default function Home() {
-  return <OnboardingFlow />;
+  return <AppShell />;
 }

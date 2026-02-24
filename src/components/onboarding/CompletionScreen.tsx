@@ -9,6 +9,7 @@ import { useCloudStorage } from "@/hooks/useCloudStorage";
 import { useHaptic } from "@/hooks/useHaptic";
 import { useMainButton } from "@/hooks/useMainButton";
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { usePreferencesStore } from "@/stores/preferences-store";
 
 export function CompletionScreen() {
   const t = useTranslations("onboarding.completion");
@@ -23,6 +24,23 @@ export function CompletionScreen() {
   useEffect(() => {
     haptic.notification("success");
     cloudStorage.setItem("onboarding-complete", "true");
+
+    // Copy onboarding data into the preferences store
+    const { data } = useOnboardingStore.getState();
+    const prefs = usePreferencesStore.getState();
+    if (data.city) {
+      prefs.setCity(data.city, data.latitude ?? undefined, data.longitude ?? undefined);
+    }
+    prefs.setNotificationsEnabled(data.notificationsEnabled);
+    prefs.setReminderTiming(data.reminderTiming);
+    for (const [prayer, enabled] of Object.entries(data.prayerNotifications)) {
+      prefs.setPrayerNotification(prayer as import("@/types/prayer").PrayerName, enabled);
+    }
+
+    // Also save city to cloud storage for cross-device hydration
+    if (data.city) {
+      cloudStorage.setItem("preferences", JSON.stringify({ city: data.city }));
+    }
 
     const timer = setTimeout(() => {
       store.completeOnboarding();
