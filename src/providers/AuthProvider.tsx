@@ -46,7 +46,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function authenticate() {
       try {
         const sdk = await import("@telegram-apps/sdk-react");
-        const initData = sdk.initDataRaw();
+
+        // Try the signal first (populated by init + restoreInitData),
+        // then fall back to reading directly from URL hash / performance entries / localStorage.
+        let initData: string | undefined;
+        try {
+          initData = sdk.initDataRaw();
+        } catch {
+          // Signal not initialized
+        }
+        if (!initData) {
+          try {
+            initData = sdk.retrieveRawInitData();
+          } catch {
+            // Launch params not available from any source
+          }
+        }
 
         if (!initData) {
           // biome-ignore lint/suspicious/noConsole: auth debug logging

@@ -1,8 +1,6 @@
 import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
-import { useBackButton } from "@/hooks/useBackButton";
-import { useMainButton } from "@/hooks/useMainButton";
 import { useAppStore } from "@/stores/app-store";
 
 import { AboutSection } from "./AboutSection";
@@ -16,9 +14,6 @@ export function SettingsScreen() {
   const setScreen = useAppStore((s) => s.setScreen);
 
   const handleBack = () => setScreen("home");
-
-  useBackButton(handleBack);
-  useMainButton({ text: "", isVisible: false, onClick: () => {} });
 
   return (
     <div

@@ -1,12 +1,10 @@
-import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "use-intl";
 
 import { CheckIcon } from "@/components/ui/CheckIcon";
 import { useCompleteOnboarding } from "@/hooks/api/usePreferences";
-import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
-import { useMainButton } from "@/hooks/useMainButton";
 import { pauseSync } from "@/hooks/usePreferencesSync";
 import { useAuthStore } from "@/stores/auth-store";
 import { useOnboardingStore } from "@/stores/onboarding-store";
@@ -28,9 +26,6 @@ export function CompletionScreen() {
   const completeOnboarding = useCompleteOnboarding();
   const queryClient = useQueryClient();
   const hasMutated = useRef(false);
-
-  useBackButton(null);
-  useMainButton({ text: "", isVisible: false, onClick: () => {} });
 
   // Submit onboarding data to backend (fire once)
   useEffect(() => {

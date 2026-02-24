@@ -126,17 +126,30 @@ async function initTelegram() {
 
   // Initialize SDK — skip in dev because sdk.init() interferes with React rendering
   if (!isDev) {
+    let initOk = false;
     try {
       sdk.init();
+      initOk = true;
     } catch {
       // SDK init may fail — continue to restore init data
     }
+
+    // Mark as Telegram app if launch params are available (even if init() failed)
     try {
-      sdk.themeParams.mountSync();
-      sdk.themeParams.bindCssVars();
+      sdk.retrieveRawLaunchParams();
       document.documentElement.classList.add("tg-app");
     } catch {
-      // Theme params not available
+      // Not in Telegram
+    }
+
+    // Mount theme if init succeeded
+    if (initOk) {
+      try {
+        sdk.themeParams.mountSync();
+        sdk.themeParams.bindCssVars();
+      } catch {
+        // Theme params not available
+      }
     }
   }
 

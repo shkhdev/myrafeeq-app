@@ -1,6 +1,4 @@
 import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
-import { useBackButton } from "@/hooks/useBackButton";
-import { useMainButton } from "@/hooks/useMainButton";
 import { usePreferencesStore } from "@/stores/preferences-store";
 
 import { HomeHeader } from "./HomeHeader";
@@ -11,9 +9,6 @@ export function HomeScreen() {
   const city = usePreferencesStore((s) => s.city);
   const { data, isLoading } = usePrayerTimes();
   const prayerTimes = data?.[0]?.times ?? null;
-
-  useBackButton(null);
-  useMainButton({ text: "", isVisible: false, onClick: () => {} });
 
   return (
     <div

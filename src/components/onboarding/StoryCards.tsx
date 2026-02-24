@@ -1,10 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 
-import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
-import { useIsTelegram } from "@/hooks/useIsTelegram";
-import { useMainButton } from "@/hooks/useMainButton";
 import { getSDK } from "@/hooks/useTelegramSDK";
 import { isRTL } from "@/i18n/locale";
 import { useLocaleStore } from "@/stores/locale-store";
@@ -38,7 +35,6 @@ export function StoryCards() {
   const t = useTranslations("onboarding.welcome");
   const store = useOnboardingStore();
   const haptic = useHaptic();
-  const isTelegram = useIsTelegram();
   const locale = useLocaleStore((s) => s.locale);
   const rtl = isRTL(locale);
 
@@ -198,16 +194,6 @@ export function StoryCards() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex, goToCard, rtl]);
 
-  // Telegram main button on final card only
-  useMainButton({
-    text: t("getStarted"),
-    isVisible: currentIndex === TOTAL_CARDS - 1,
-    hasShineEffect: true,
-    onClick: handleGetStarted,
-  });
-
-  useBackButton(null);
-
   const cards: CardData[] = [
     {
       icon: <MosqueIcon className="h-28 w-28" />,
@@ -309,8 +295,8 @@ export function StoryCards() {
           </p>
         </div>
 
-        {/* CTA for last card (fallback for non-Telegram) */}
-        {isLastCard && !isTelegram && (
+        {/* CTA for last card */}
+        {isLastCard && (
           <button
             type="button"
             onClick={handleGetStarted}
