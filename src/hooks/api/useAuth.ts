@@ -10,7 +10,7 @@ export function useValidateAuth() {
   return useMutation({
     mutationFn: validateTelegramAuth,
     onSuccess: (data) => {
-      setAuth(data.token, data.user.telegramId);
+      setAuth(data.token, data.user.telegramId, data.user.onboardingCompleted);
     },
   });
 }

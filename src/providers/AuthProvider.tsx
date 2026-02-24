@@ -34,7 +34,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const response = await validateTelegramAuth(initData);
         if (!cancelled) {
-          useAuthStore.getState().setAuth(response.token, response.user.telegramId);
+          useAuthStore
+            .getState()
+            .setAuth(response.token, response.user.telegramId, response.user.onboardingCompleted);
         }
       } catch (error) {
         // biome-ignore lint/suspicious/noConsole: auth error logging
