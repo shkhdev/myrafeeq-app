@@ -13,7 +13,7 @@ export function BackArrow({ onClick }: BackArrowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-11 w-11 items-center justify-center rounded-full text-white/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rtl:-scale-x-100"
+      className="flex h-11 w-11 items-center justify-center rounded-full text-on-surface-muted transition-colors hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 rtl:-scale-x-100"
       aria-label={t("goBack")}
     >
       <svg

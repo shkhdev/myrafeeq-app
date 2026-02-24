@@ -33,7 +33,7 @@ export function CompletionScreen() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center bg-[#0f1419] px-6"
+      className="flex flex-col items-center justify-center bg-surface px-6"
       style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
     >
       {/* Animated checkmark */}
@@ -41,10 +41,10 @@ export function CompletionScreen() {
         <CheckIcon size={48} role="img" ariaLabel={tCommon("success")} animated />
       </div>
 
-      <h2 className="animate-fade-in-up-1 mt-8 text-center text-xl font-bold tracking-tight text-white">
+      <h2 className="animate-fade-in-up-1 mt-8 text-center text-xl font-bold tracking-tight text-on-surface">
         {t("title")}
       </h2>
-      <p className="animate-fade-in-up-2 mx-auto mt-3 max-w-[280px] text-center text-sm leading-relaxed text-white/55">
+      <p className="animate-fade-in-up-2 mx-auto mt-3 max-w-[280px] text-center text-sm leading-relaxed text-on-surface-muted">
         {t("description")}
       </p>
     </div>

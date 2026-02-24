@@ -15,6 +15,7 @@ import { PrayerClockIcon } from "./icons/PrayerClockIcon";
 import { QuranBookIcon } from "./icons/QuranBookIcon";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { StoryProgressBar } from "./StoryProgressBar";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const TOTAL_CARDS = 3;
 const AUTO_ADVANCE_MS = 4000;
@@ -230,7 +231,7 @@ export function StoryCards() {
 
   return (
     <div
-      className="relative flex flex-col bg-[#0f1419]"
+      className="relative flex flex-col bg-surface"
       style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
@@ -250,12 +251,15 @@ export function StoryCards() {
           />
         </div>
         <div className="flex items-center justify-between px-4 pt-2">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+          </div>
           {!isLastCard && (
             <button
               type="button"
               onClick={handleSkip}
-              className="h-11 rounded-lg px-3 text-sm font-medium text-white/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+              className="h-11 rounded-lg px-3 text-sm font-medium text-on-surface-muted transition-colors hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30"
               aria-label={t("skipButton")}
             >
               {t("skipButton")}
@@ -283,7 +287,7 @@ export function StoryCards() {
                 </span>
               </div>
             ) : null}
-            <p className="text-sm font-medium text-white/70">
+            <p className="text-sm font-medium text-on-surface/70">
               {t("greeting", { name: userInfo.firstName || "Friend" })}
             </p>
           </div>
@@ -294,10 +298,10 @@ export function StoryCards() {
 
         {/* Title + description — tightly grouped */}
         <div className="flex flex-col items-center gap-3">
-          <h2 className="animate-fade-in-up-1 text-center text-xl font-bold tracking-tight text-white">
+          <h2 className="animate-fade-in-up-1 text-center text-xl font-bold tracking-tight text-on-surface">
             {currentCard?.title}
           </h2>
-          <p className="animate-fade-in-up-2 mx-auto max-w-[280px] text-center text-sm leading-relaxed text-white/55">
+          <p className="animate-fade-in-up-2 mx-auto max-w-[280px] text-center text-sm leading-relaxed text-on-surface-muted">
             {currentCard?.description}
           </p>
         </div>
@@ -307,7 +311,7 @@ export function StoryCards() {
           <button
             type="button"
             onClick={handleGetStarted}
-            className="animate-fade-in-up-3 w-full max-w-xs rounded-xl bg-primary py-4 text-base font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="animate-fade-in-up-3 w-full max-w-xs rounded-xl bg-primary py-4 text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           >
             {t("getStarted")}
           </button>
@@ -316,7 +320,7 @@ export function StoryCards() {
         {/* Tap hint on non-final cards — always in DOM to avoid layout shift */}
         {!isLastCard && (
           <p
-            className="text-xs text-white/40 transition-opacity duration-500"
+            className="text-xs text-on-surface-muted/70 transition-opacity duration-500"
             style={{
               opacity: showTapHint ? 1 : 0,
               animation: showTapHint ? "pulseGlow 2s ease-in-out infinite" : "none",

@@ -2,6 +2,10 @@
   "common": {
     "goBack": "رجوع",
     "changeLanguage": "تغيير اللغة",
+    "changeTheme": "تغيير المظهر",
+    "theme_light": "فاتح",
+    "theme_dark": "داكن",
+    "theme_system": "تلقائي",
     "sunrise": "الشروق",
     "stepOf": "الخطوة {current} من {total}",
     "checkmark": "علامة صح",

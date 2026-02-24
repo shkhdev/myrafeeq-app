@@ -2,6 +2,10 @@
   "common": {
     "goBack": "Go back",
     "changeLanguage": "Change language",
+    "changeTheme": "Change theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System",
     "sunrise": "Sunrise",
     "stepOf": "Step {current} of {total}",
     "checkmark": "Checkmark",

@@ -30,7 +30,7 @@ export function StoryProgressBar({
         const isCurrent = i === currentIndex;
 
         return (
-          <div key={`bar-${i}`} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/20">
+          <div key={`bar-${i}`} className="h-[3px] flex-1 overflow-hidden rounded-full bg-on-surface/20">
             {isCompleted ? (
               <div className="h-full w-full rounded-full bg-primary" />
             ) : isCurrent ? (

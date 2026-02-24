@@ -2,6 +2,10 @@
   "common": {
     "goBack": "Orqaga",
     "changeLanguage": "Tilni o'zgartirish",
+    "changeTheme": "Mavzuni o'zgartirish",
+    "theme_light": "Yorug'",
+    "theme_dark": "Qorong'u",
+    "theme_system": "Tizim",
     "sunrise": "Quyosh chiqishi",
     "stepOf": "{total} dan {current}-qadam",
     "checkmark": "Belgi",

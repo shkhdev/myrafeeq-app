@@ -24,7 +24,7 @@ export function StepIndicator({ current, total }: StepIndicatorProps) {
               ? "h-2 w-6 bg-primary shadow-[0_0_8px_var(--color-primary)]"
               : i + 1 < current
                 ? "h-2 w-2 bg-primary/50"
-                : "h-2 w-2 bg-white/20"
+                : "h-2 w-2 bg-on-surface/20"
           }`}
         />
       ))}

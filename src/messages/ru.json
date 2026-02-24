@@ -2,6 +2,10 @@
   "common": {
     "goBack": "Назад",
     "changeLanguage": "Сменить язык",
+    "changeTheme": "Сменить тему",
+    "theme_light": "Светлая",
+    "theme_dark": "Тёмная",
+    "theme_system": "Системная",
     "sunrise": "Восход",
     "stepOf": "Шаг {current} из {total}",
     "checkmark": "Галочка",

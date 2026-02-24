@@ -39,7 +39,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-11 w-11 items-center justify-center rounded-full text-white/60 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+        className="flex h-11 w-11 items-center justify-center rounded-full text-on-surface-muted transition-colors hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30"
         aria-label={t("changeLanguage")}
       >
         <svg
@@ -61,7 +61,7 @@ export function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute start-0 top-full z-50 mt-2 min-w-40 rounded-xl bg-[#1a2332] p-1 shadow-elevated">
+        <div className="absolute start-0 top-full z-50 mt-2 min-w-40 rounded-xl bg-surface-secondary p-1 shadow-elevated ring-1 ring-on-surface/10">
           {SUPPORTED_LOCALES.map((loc) => (
             <button
               key={loc}
@@ -74,8 +74,8 @@ export function LanguageSwitcher() {
               className={`flex h-11 w-full items-center rounded-lg px-3 text-sm transition-colors ${
                 locale === loc
                   ? "bg-primary/15 font-semibold text-primary"
-                  : "text-white/80 hover:bg-white/5"
-              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30`}
+                  : "text-on-surface/80 hover:bg-on-surface/5"
+              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30`}
             >
               {LOCALE_LABELS[loc]}
             </button>

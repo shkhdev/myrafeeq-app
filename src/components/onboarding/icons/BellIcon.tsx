@@ -1,7 +1,7 @@
 export function BellIcon({ className = "h-30 w-30" }: { className?: string }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-full bg-white/5 p-4 ring-1 ring-white/10 ${className}`}
+      className={`flex items-center justify-center rounded-full bg-on-surface/5 p-4 ring-1 ring-on-surface/10 ${className}`}
     >
       <svg
         viewBox="0 0 80 80"

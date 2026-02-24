@@ -23,12 +23,12 @@ export function CitySearch({ onSelect }: CitySearchProps) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={t("searchPlaceholder")}
-        className="h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        className="h-12 rounded-xl border border-on-surface/10 bg-on-surface/5 px-4 text-sm text-on-surface placeholder:text-on-surface-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         // biome-ignore lint/a11y/noAutofocus: intentional focus for search UX in Telegram Mini App
         autoFocus
       />
 
-      <div className="max-h-72 overflow-y-auto rounded-xl bg-white/5">
+      <div className="max-h-72 overflow-y-auto rounded-xl bg-on-surface/5">
         {cities.map((city) => (
           <button
             key={city.id}
@@ -37,10 +37,10 @@ export function CitySearch({ onSelect }: CitySearchProps) {
               haptic.impact("light");
               onSelect(city);
             }}
-            className="flex w-full flex-col px-4 py-3 text-start transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/30"
+            className="flex w-full flex-col px-4 py-3 text-start transition-colors hover:bg-on-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-on-surface/30"
           >
-            <span className="text-sm font-medium text-white/90">{city.name}</span>
-            <span className="text-xs text-white/40">{city.country}</span>
+            <span className="text-sm font-medium text-on-surface">{city.name}</span>
+            <span className="text-xs text-on-surface-muted/70">{city.country}</span>
           </button>
         ))}
       </div>

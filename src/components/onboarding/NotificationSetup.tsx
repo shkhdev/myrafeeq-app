@@ -82,7 +82,7 @@ export function NotificationSetup() {
 
   return (
     <div
-      className="flex flex-col bg-[#0f1419]"
+      className="flex flex-col bg-surface"
       style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
     >
       {/* Top bar: back + step indicator */}
@@ -97,12 +97,12 @@ export function NotificationSetup() {
 
       {/* Compact header — no icon, minimal spacing */}
       <div className="animate-fade-in-up px-6 pt-3">
-        <h2 className="text-lg font-bold tracking-tight text-white">{t("title")}</h2>
-        <p className="mt-1 text-sm leading-relaxed text-white/55">{t("description")}</p>
+        <h2 className="text-lg font-bold tracking-tight text-on-surface">{t("title")}</h2>
+        <p className="mt-1 text-sm leading-relaxed text-on-surface-muted">{t("description")}</p>
       </div>
 
       {/* Prayer toggles */}
-      <div className="animate-fade-in-up-1 mx-6 mt-4 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
+      <div className="animate-fade-in-up-1 mx-6 mt-4 overflow-hidden rounded-2xl bg-on-surface/5 ring-1 ring-on-surface/10">
         {PRAYER_NAMES.map((prayer, i) => {
           const Icon = getPrayerIcon(prayer);
           return (
@@ -110,18 +110,18 @@ export function NotificationSetup() {
               key={prayer}
               type="button"
               onClick={() => handlePrayerToggle(prayer)}
-              className={`flex h-[52px] w-full items-center justify-between px-4 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/30 ${
-                i < PRAYER_NAMES.length - 1 ? "border-b border-white/5" : ""
+              className={`flex h-[52px] w-full items-center justify-between px-4 transition-colors hover:bg-on-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-on-surface/30 ${
+                i < PRAYER_NAMES.length - 1 ? "border-b border-on-surface/5" : ""
               }`}
               aria-label={`${t(prayer)} ${prayerNotifications[prayer] ? "enabled" : "disabled"}`}
             >
               <span className="flex items-center gap-3">
                 <Icon size={32} />
-                <span className="text-[15px] font-medium text-white/90">{t(prayer)}</span>
+                <span className="text-[15px] font-medium text-on-surface">{t(prayer)}</span>
               </span>
               <span className="flex items-center gap-3">
                 {prayerTimes && (
-                  <span className="text-xs tabular-nums text-white/40">{prayerTimes[prayer]}</span>
+                  <span className="text-xs tabular-nums text-on-surface-muted/70">{prayerTimes[prayer]}</span>
                 )}
                 <ToggleSwitch checked={prayerNotifications[prayer]} />
               </span>
@@ -132,7 +132,7 @@ export function NotificationSetup() {
 
       {/* Reminder timing — horizontal scroll */}
       <div className="animate-fade-in-up-2 mt-4 ps-6">
-        <h3 className="mb-2.5 text-sm font-semibold text-white/60">{t("reminderTiming")}</h3>
+        <h3 className="mb-2.5 text-sm font-semibold text-on-surface-muted">{t("reminderTiming")}</h3>
         <div className="no-scrollbar flex gap-2 overflow-x-auto pe-6">
           {REMINDER_OPTIONS.map((option) => {
             const isSelected = reminderTiming === option.value;
@@ -141,10 +141,10 @@ export function NotificationSetup() {
                 key={option.value}
                 type="button"
                 onClick={() => handleTimingSelect(option.value)}
-                className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+                className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 ${
                   isSelected
-                    ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30"
-                    : "bg-white/5 text-white/50 hover:bg-white/10"
+                    ? "bg-primary/20 text-primary ring-1 ring-primary/30"
+                    : "bg-on-surface/5 text-on-surface-muted hover:bg-on-surface/10"
                 }`}
               >
                 {option.minutes
@@ -164,14 +164,14 @@ export function NotificationSetup() {
         <button
           type="button"
           onClick={handleEnable}
-          className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           {t("enableReminders")}
         </button>
         <button
           type="button"
           onClick={handleSkipNotifications}
-          className="flex h-11 items-center justify-center rounded-xl text-sm font-medium text-white/50 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+          className="flex h-11 items-center justify-center rounded-xl text-sm font-medium text-on-surface-muted transition-colors hover:text-on-surface/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30"
         >
           {t("maybeLater")}
         </button>
