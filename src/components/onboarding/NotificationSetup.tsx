@@ -6,6 +6,7 @@ import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
 import { getPrayerTimes } from "@/data/prayer-times";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useIsTelegram } from "@/hooks/useIsTelegram";
 import { useMainButton } from "@/hooks/useMainButton";
 import { getSDK } from "@/hooks/useTelegramSDK";
 import { getPrayerIcon } from "@/lib/prayer-icons";
@@ -27,6 +28,7 @@ export function NotificationSetup() {
   const t = useTranslations("onboarding.notifications");
   const store = useOnboardingStore();
   const haptic = useHaptic();
+  const isTelegram = useIsTelegram();
   const { prayerNotifications, reminderTiming } = store.data;
 
   const selectedCity = store.data.city;
@@ -158,18 +160,20 @@ export function NotificationSetup() {
         </div>
       </div>
 
-      {/* Bottom buttons — safe area padding */}
+      {/* Bottom buttons — safe area padding (primary hidden inside Telegram where Main Button is used) */}
       <div
         className="mt-auto flex flex-col gap-3 px-6 pt-6"
         style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
       >
-        <button
-          type="button"
-          onClick={handleEnable}
-          className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
-          {t("enableReminders")}
-        </button>
+        {!isTelegram && (
+          <button
+            type="button"
+            onClick={handleEnable}
+            className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          >
+            {t("enableReminders")}
+          </button>
+        )}
         <button
           type="button"
           onClick={handleSkipNotifications}

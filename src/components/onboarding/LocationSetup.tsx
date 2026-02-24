@@ -10,6 +10,7 @@ import { findCityByCoords } from "@/data/cities";
 import { getPrayerTimes } from "@/data/prayer-times";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useIsTelegram } from "@/hooks/useIsTelegram";
 import { useMainButton } from "@/hooks/useMainButton";
 import { getSDK } from "@/hooks/useTelegramSDK";
 import { getPrayerIcon } from "@/lib/prayer-icons";
@@ -31,6 +32,7 @@ export function LocationSetup() {
   const tCommon = useTranslations("common");
   const store = useOnboardingStore();
   const haptic = useHaptic();
+  const isTelegram = useIsTelegram();
   const [state, setState] = useState<LocationState>("initial");
 
   const resolveLocation = useCallback(
@@ -204,19 +206,21 @@ export function LocationSetup() {
             </div>
           </div>
 
-          {/* Continue button — pinned to bottom with safe area */}
-          <div
-            className="mt-auto pt-6"
-            style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
-          >
-            <button
-              type="button"
-              onClick={handleContinue}
-              className="animate-fade-in-up-2 w-full rounded-2xl bg-primary py-4 text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          {/* Continue button — pinned to bottom with safe area (hidden inside Telegram where Main Button is used) */}
+          {!isTelegram && (
+            <div
+              className="mt-auto pt-6"
+              style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
             >
-              {t("continue")}
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={handleContinue}
+                className="animate-fade-in-up-2 w-full rounded-2xl bg-primary py-4 text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              >
+                {t("continue")}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

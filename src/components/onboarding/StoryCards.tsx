@@ -3,6 +3,7 @@ import { useTranslations } from "use-intl";
 
 import { useBackButton } from "@/hooks/useBackButton";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useIsTelegram } from "@/hooks/useIsTelegram";
 import { useMainButton } from "@/hooks/useMainButton";
 import { getSDK } from "@/hooks/useTelegramSDK";
 import { isRTL } from "@/i18n/locale";
@@ -37,6 +38,7 @@ export function StoryCards() {
   const t = useTranslations("onboarding.welcome");
   const store = useOnboardingStore();
   const haptic = useHaptic();
+  const isTelegram = useIsTelegram();
   const locale = useLocaleStore((s) => s.locale);
   const rtl = isRTL(locale);
 
@@ -305,7 +307,7 @@ export function StoryCards() {
         </div>
 
         {/* CTA for last card (fallback for non-Telegram) */}
-        {isLastCard && (
+        {isLastCard && !isTelegram && (
           <button
             type="button"
             onClick={handleGetStarted}

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "use-intl";
 
 import { CheckIcon } from "@/components/ui/CheckIcon";
@@ -26,11 +26,15 @@ export function CompletionScreen() {
   const store = useOnboardingStore();
   const haptic = useHaptic();
   const completeOnboarding = useCompleteOnboarding();
+  const hasMutated = useRef(false);
 
   useBackButton(null);
   useMainButton({ text: "", isVisible: false, onClick: () => {} });
 
   useEffect(() => {
+    if (hasMutated.current) return;
+    hasMutated.current = true;
+
     haptic.notification("success");
 
     const { data } = useOnboardingStore.getState();
