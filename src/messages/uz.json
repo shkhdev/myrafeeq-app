@@ -25,6 +25,7 @@
     "timeUntil": "{hours}s {minutes}d",
     "timeUntilMinutes": "{minutes}d",
     "prayersCompleted": "{count}/{total} o'qildi",
+    "inTime": "{time} dan keyin",
     "allPrayersCompleted": "Barcha namozlar o'qildi",
     "settings": "Sozlamalar"
   },

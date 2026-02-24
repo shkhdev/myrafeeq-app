@@ -49,11 +49,13 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
   const textColor = getGradientTextColor();
   const formatTime = timeFormat === "12h" ? formatTime12h : (t: string) => t;
 
+  // Current period is a trackable prayer (not sunrise)
+  const isCurrentAPrayer = state.currentPeriod && state.currentPeriod !== "sunrise";
   const allDone = !state.nextPrayer && state.currentPeriod === "isha";
 
   return (
     <div
-      className="animate-fade-in-up mx-5 mt-4 overflow-hidden rounded-2xl p-5"
+      className="animate-fade-in-up mx-5 mt-4 overflow-hidden rounded-2xl p-5 shadow-lg shadow-black/20"
       style={{
         background: getGradientStyle(gradientSlot),
         color: textColor,
@@ -67,21 +69,30 @@ export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
             {tCommon("isha")} — {formatTime(prayerTimes.isha)}
           </p>
         </>
+      ) : isCurrentAPrayer && state.currentPeriod && state.nextPrayer ? (
+        <>
+          <p className="text-sm font-medium opacity-80">{t("activePrayer")}</p>
+          <p className="mt-1 text-2xl font-bold">
+            {tCommon(state.currentPeriod)} — {formatTime(prayerTimes[state.currentPeriod])}
+          </p>
+          <p className="mt-2 text-sm opacity-70">
+            {t("nextPrayer")}: {tCommon(state.nextPrayer.name)} {formatTime(state.nextPrayer.time)}
+            {state.countdown && ` · ${t("inTime", { time: state.countdown })}`}
+          </p>
+        </>
       ) : state.nextPrayer ? (
         <>
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium opacity-80">{t("nextPrayer")}</p>
-            {state.countdown && <p className="text-sm font-medium opacity-80">{state.countdown}</p>}
+            {state.countdown && (
+              <p className="text-sm font-medium opacity-80">
+                {t("inTime", { time: state.countdown })}
+              </p>
+            )}
           </div>
           <p className="mt-1 text-2xl font-bold">
             {tCommon(state.nextPrayer.name)} — {formatTime(state.nextPrayer.time)}
           </p>
-          {state.currentPeriod && (
-            <p className="mt-2 text-sm opacity-70">
-              {t("activePrayer")}: {tCommon(state.currentPeriod)}{" "}
-              {formatTime(prayerTimes[state.currentPeriod])}
-            </p>
-          )}
         </>
       ) : (
         <>

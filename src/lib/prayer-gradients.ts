@@ -18,9 +18,9 @@ const PRAYER_GRADIENTS: Record<PrayerTimeSlot, PrayerGradient> = {
     to: "#f5d485",
   },
   dhuhr: {
-    from: "#4a90d9",
-    via: "#6aaff0",
-    to: "#a8d8ff",
+    from: "#1e90ff",
+    via: "#4a9ee8",
+    to: "#87CEEB",
   },
   asr: {
     from: "#d4945a",

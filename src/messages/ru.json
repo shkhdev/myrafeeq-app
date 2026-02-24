@@ -25,6 +25,7 @@
     "timeUntil": "{hours}ч {minutes}м",
     "timeUntilMinutes": "{minutes}м",
     "prayersCompleted": "{count}/{total} совершено",
+    "inTime": "через {time}",
     "allPrayersCompleted": "Все намазы совершены",
     "settings": "Настройки"
   },

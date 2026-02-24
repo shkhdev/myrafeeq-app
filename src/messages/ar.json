@@ -25,6 +25,7 @@
     "timeUntil": "{hours}س {minutes}د",
     "timeUntilMinutes": "{minutes}د",
     "prayersCompleted": "{count}/{total} صُلّيت",
+    "inTime": "بعد {time}",
     "allPrayersCompleted": "تمت جميع الصلوات",
     "settings": "الإعدادات"
   },

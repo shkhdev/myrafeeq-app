@@ -3,7 +3,12 @@
 import { useTranslations } from "next-intl";
 
 import { useHaptic } from "@/hooks/useHaptic";
-import { getCurrentPrayerPeriod, getTodayDate } from "@/lib/prayer-time-utils";
+import {
+  ALL_PRAYER_SLOTS,
+  getCurrentPrayerPeriod,
+  getTodayDate,
+  type PrayerTimeSlot,
+} from "@/lib/prayer-time-utils";
 import { usePrayerTrackingStore } from "@/stores/prayer-tracking-store";
 import type { PrayerTimes } from "@/types/prayer";
 import { PRAYER_NAMES } from "@/types/prayer";
@@ -12,6 +17,13 @@ import { PrayerRow } from "./PrayerRow";
 
 interface PrayerTimesListProps {
   prayerTimes: PrayerTimes;
+}
+
+function isPrayerPast(prayer: string, currentPeriod: PrayerTimeSlot | null): boolean {
+  if (!currentPeriod) return false;
+  const slotIndex = ALL_PRAYER_SLOTS.indexOf(prayer as PrayerTimeSlot);
+  const currentIndex = ALL_PRAYER_SLOTS.indexOf(currentPeriod);
+  return slotIndex >= 0 && slotIndex < currentIndex;
 }
 
 export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
@@ -40,6 +52,7 @@ export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
               prayer={prayer}
               time={prayerTimes[prayer]}
               isActive={currentPeriod === prayer}
+              isPast={isPrayerPast(prayer, currentPeriod)}
               isPrayed={tracking.isPrayed(today, prayer)}
               isLast={false}
               onToggle={() => {
@@ -53,6 +66,7 @@ export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
                 prayer="sunrise"
                 time={prayerTimes.sunrise}
                 isActive={currentPeriod === "sunrise"}
+                isPast={isPrayerPast("sunrise", currentPeriod)}
                 isPrayed={false}
                 isLast={false}
               />

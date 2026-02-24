@@ -25,6 +25,7 @@
     "timeUntil": "{hours}h {minutes}m",
     "timeUntilMinutes": "{minutes}m",
     "prayersCompleted": "{count}/{total} prayed",
+    "inTime": "in {time}",
     "allPrayersCompleted": "All prayers completed",
     "settings": "Settings"
   },

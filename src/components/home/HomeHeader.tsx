@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl";
 
 import { GearIcon } from "@/components/icons/GearIcon";
 import { LocationPinIcon } from "@/components/ui/LocationPinIcon";
+import { getHijriDate } from "@/lib/hijri-date";
 import { useAppStore } from "@/stores/app-store";
+import { usePreferencesStore } from "@/stores/preferences-store";
 import type { City } from "@/types/city";
 
 interface HomeHeaderProps {
@@ -14,17 +16,24 @@ interface HomeHeaderProps {
 export function HomeHeader({ city }: HomeHeaderProps) {
   const t = useTranslations("home");
   const setScreen = useAppStore((s) => s.setScreen);
+  const hijriCorrection = usePreferencesStore((s) => s.hijriCorrection);
+  const hijriDate = getHijriDate(hijriCorrection);
 
   return (
     <div
       className="flex items-center justify-between px-5"
       style={{ paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 0.75rem)" }}
     >
-      <div className="flex items-center gap-1.5">
-        <LocationPinIcon />
-        <span className="text-sm font-medium text-on-surface">
-          {city ? `${city.name}, ${city.country}` : "—"}
-        </span>
+      <div className="flex items-start gap-1.5">
+        <div className="mt-0.5 shrink-0">
+          <LocationPinIcon />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-on-surface">
+            {city ? `${city.name}, ${city.country}` : "—"}
+          </p>
+          {city && <p className="text-[11px] text-on-surface-muted">{hijriDate}</p>}
+        </div>
       </div>
       <button
         type="button"
