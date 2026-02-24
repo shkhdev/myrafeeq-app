@@ -105,6 +105,7 @@ export function StoryCards() {
       if (p >= 1) {
         if (timerRef.current) clearInterval(timerRef.current);
         if (currentIndex < TOTAL_CARDS - 1) {
+          setShowTapHint(false);
           setProgress(0);
           pausedProgressRef.current = 0;
           store.setStoryCardIndex(currentIndex + 1);
@@ -121,6 +122,7 @@ export function StoryCards() {
   const goToCard = useCallback(
     (index: number) => {
       if (index >= 0 && index < TOTAL_CARDS) {
+        setShowTapHint(false);
         store.setStoryCardIndex(index);
         setProgress(0);
         pausedProgressRef.current = 0;

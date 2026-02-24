@@ -126,7 +126,11 @@ async function initTelegram() {
 
   // Initialize SDK — skip in dev because sdk.init() interferes with React rendering
   if (!isDev) {
-    sdk.init();
+    try {
+      sdk.init();
+    } catch {
+      // SDK init may fail — continue to restore init data
+    }
     try {
       sdk.themeParams.mountSync();
       sdk.themeParams.bindCssVars();

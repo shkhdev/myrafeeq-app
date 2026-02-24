@@ -12,19 +12,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     const isTelegram = root.classList.contains("tg-app");
 
-    // Explicit light/dark — applies everywhere (Telegram and standalone)
+    // Explicit light/dark — bypass Telegram CSS mapping via .theme-override
     if (preference === "light") {
+      root.classList.add("theme-override");
       root.classList.remove("dark");
-      return;
+      return () => {
+        root.classList.remove("theme-override");
+      };
     }
     if (preference === "dark") {
+      root.classList.add("theme-override");
       root.classList.add("dark");
-      return;
+      return () => {
+        root.classList.remove("theme-override");
+      };
     }
 
-    // "system" preference
+    // "system" preference — let Telegram CSS mapping apply
+    root.classList.remove("theme-override");
+
     if (isTelegram) {
-      // Inside Telegram: follow Telegram's dark mode signal
+      // Follow Telegram's dark mode signal
       let unsub: (() => void) | undefined;
       let cancelled = false;
 
@@ -39,7 +47,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             root.classList.toggle("dark", isDark);
           });
         } catch {
-          // SDK not available — use OS media query as fallback
           root.classList.toggle("dark", getSystemDark());
         }
       })();

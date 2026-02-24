@@ -4,7 +4,7 @@
    Applied when .tg-app class is on <html>
    ============================================ */
 
-.tg-app {
+.tg-app:not(.theme-override) {
   --sem-surface: var(--tg-theme-bg-color, #ffffff);
   --sem-surface-secondary: var(--tg-theme-secondary-bg-color, #f5f5f5);
   --sem-on-surface: var(--tg-theme-text-color, #1a1a1a);
