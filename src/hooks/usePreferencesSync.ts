@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { updatePreferences } from "@/lib/api/preferences";
 import { useAuthStore } from "@/stores/auth-store";
@@ -46,6 +48,7 @@ function buildRequest(): UpdatePreferencesRequest {
  * to the backend with a 500ms debounce. Mount once in AppProviders.
  */
 export function usePreferencesSync() {
+  const queryClient = useQueryClient();
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retryCountRef = useRef(0);
@@ -55,8 +58,10 @@ export function usePreferencesSync() {
       updatePreferences(buildRequest())
         .then(() => {
           retryCountRef.current = 0;
+          queryClient.invalidateQueries({ queryKey: ["prayer-times"] });
         })
         .catch((error: unknown) => {
+          Sentry.captureException(error, { tags: { context: "preferences.sync" } });
           // biome-ignore lint/suspicious/noConsole: sync error logging
           console.warn(
             "[PreferencesSync] Failed to sync:",

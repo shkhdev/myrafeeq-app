@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { API_URL } from "@/env";
 import { useAuthStore } from "@/stores/auth-store";
 import type { ApiErrorResponse } from "@/types/api";
@@ -50,7 +51,8 @@ async function tryReauth(): Promise<boolean> {
       .getState()
       .setAuth(data.token, data.user.telegramId, data.user.onboardingCompleted);
     return true;
-  } catch {
+  } catch (error) {
+    Sentry.captureException(error, { tags: { context: "api.reauth" } });
     return false;
   }
 }

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { useEffect, useRef, useState } from "react";
 import { IntlProvider as UseIntlProvider } from "use-intl";
 
@@ -64,7 +65,10 @@ export function IntlProvider({ children }: { children: React.ReactNode }) {
         setActiveLocale(locale);
         initialLoad.current = false;
       })
-      .catch(() => {
+      .catch((error: unknown) => {
+        Sentry.captureException(error, {
+          tags: { context: "intl.load_messages", locale },
+        });
         // Fallback to English if dynamic import fails
         loadMessages("en")
           .then((msgs) => {
@@ -72,7 +76,10 @@ export function IntlProvider({ children }: { children: React.ReactNode }) {
             setActiveLocale("en");
             initialLoad.current = false;
           })
-          .catch(() => {
+          .catch((enError: unknown) => {
+            Sentry.captureException(enError, {
+              tags: { context: "intl.load_messages_fallback" },
+            });
             // Last resort — render without i18n
             initialLoad.current = false;
             setMessages({});

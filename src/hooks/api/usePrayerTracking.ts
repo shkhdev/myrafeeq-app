@@ -42,8 +42,7 @@ export function useTogglePrayer() {
       }
       haptic.notification("error");
     },
-    onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["prayer-tracking", variables.date] });
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["prayer-stats"] });
     },
   });

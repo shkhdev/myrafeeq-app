@@ -45,7 +45,7 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
       <div className="overflow-hidden rounded-2xl bg-on-surface/5 ring-1 ring-on-surface/10">
         {ADJUSTABLE_PRAYERS.map((prayer, i) => {
           const Icon = getPrayerIcon(prayer);
-          const value = adjustments[prayer];
+          const value = adjustments[prayer] ?? 0;
           return (
             <div
               key={prayer}

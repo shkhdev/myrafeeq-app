@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { pauseSync } from "@/hooks/usePreferencesSync";
 import { validateTelegramAuth } from "@/lib/api/auth";
@@ -65,9 +66,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             pauseSync();
             hydrateFromBackend(prefs);
           }
-        } catch {
+        } catch (prefError) {
           // Preferences fetch failed — pause sync to prevent overwriting backend data with defaults
           pauseSync();
+          Sentry.captureException(prefError, { tags: { context: "auth.preferences_hydrate" } });
           // biome-ignore lint/suspicious/noConsole: preferences fetch error
           console.warn("[AuthProvider] Failed to load preferences from backend");
         }
@@ -77,6 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setStatus("ready");
       }
     } catch (error) {
+      Sentry.captureException(error, { tags: { context: "auth.authenticate" } });
       // biome-ignore lint/suspicious/noConsole: auth error logging
       console.error("[AuthProvider] Authentication failed:", error);
       if (!signal.cancelled) {

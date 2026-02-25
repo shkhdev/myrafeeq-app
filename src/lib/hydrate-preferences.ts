@@ -1,6 +1,7 @@
 import { usePreferencesStore } from "@/stores/preferences-store";
 import { useThemeStore } from "@/stores/theme-store";
 import type { UserPreferencesResponse } from "@/types/api";
+import { DEFAULT_ADJUSTMENTS } from "@/types/prayer";
 
 /** Hydrate zustand stores from a backend preferences response. */
 export function hydrateFromBackend(prefs: UserPreferencesResponse) {
@@ -16,7 +17,7 @@ export function hydrateFromBackend(prefs: UserPreferencesResponse) {
     notificationsEnabled: prefs.notificationsEnabled,
     reminderTiming: prefs.reminderTiming,
     prayerNotifications: prefs.prayerNotifications,
-    adjustments: prefs.manualAdjustments,
+    adjustments: { ...DEFAULT_ADJUSTMENTS, ...prefs.manualAdjustments },
   });
 
   if (prefs.theme) {

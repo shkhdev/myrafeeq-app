@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { useEffect, useState } from "react";
 
 import { resolveLocale } from "@/i18n/locale";
@@ -189,8 +190,8 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     withTimeout(initTelegram(), 5000)
-      .catch(() => {
-        // Not in Telegram or init timed out — proceed with web defaults
+      .catch((error: unknown) => {
+        Sentry.captureException(error, { tags: { context: "telegram.init" } });
       })
       .finally(() => setReady(true));
   }, []);
