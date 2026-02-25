@@ -8,7 +8,7 @@ Sentry.init({
     Sentry.replayIntegration(),
   ],
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.2,
-  tracePropagationTargets: ["localhost", import.meta.env.VITE_API_URL],
+  tracePropagationTargets: ["localhost"],
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
   enableLogs: true,
