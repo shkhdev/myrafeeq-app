@@ -78,7 +78,7 @@ export const usePreferencesStore = create<PreferencesState>()((set) => ({
     maghrib: true,
     isha: true,
   },
-  reminderTiming: "on_time",
+  reminderTiming: "ON_TIME",
   // Appearance
   timeFormat: "12h",
   // Prayer calculation

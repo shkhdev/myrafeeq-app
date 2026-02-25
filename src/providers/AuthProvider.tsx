@@ -83,9 +83,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (error instanceof Error && "code" in error) {
           errorRef.current = {
             title: "Authentication failed",
-            message: (error as { code: string }).code === "INVALID_AUTH"
-              ? "Telegram authentication was rejected by the server. Please reopen the app from Telegram."
-              : error.message,
+            message:
+              (error as { code: string }).code === "INVALID_AUTH"
+                ? "Telegram authentication was rejected by the server. Please reopen the app from Telegram."
+                : error.message,
           };
         } else if (error instanceof TypeError) {
           errorRef.current = {

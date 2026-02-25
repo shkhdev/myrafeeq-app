@@ -3,10 +3,7 @@ import * as Sentry from "@sentry/react";
 Sentry.init({
   dsn: "https://ba9032a110dd5a9216987359de563623@o4510946269331456.ingest.us.sentry.io/4510946270576640",
   sendDefaultPii: true,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
+  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
   tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.2,
   tracePropagationTargets: ["localhost"],
   replaysSessionSampleRate: 0.1,

@@ -9,28 +9,37 @@ type Messages = Record<string, unknown>;
 
 const messageCache = new Map<SupportedLocale, Messages>();
 
+function extractMessages(mod: Record<string, unknown>): Messages {
+  const msgs = (mod.default ?? mod) as Messages;
+  if (typeof msgs !== "object" || msgs === null || Object.keys(msgs).length === 0) {
+    throw new Error("Loaded messages are empty or invalid");
+  }
+  return msgs;
+}
+
 async function loadMessages(locale: SupportedLocale): Promise<Messages> {
   const cached = messageCache.get(locale);
   if (cached) return cached;
 
-  let mod: { default: Messages };
+  let mod: Record<string, unknown>;
   switch (locale) {
     case "ar":
-      mod = (await import("../messages/ar.json")) as { default: Messages };
+      mod = (await import("../messages/ar.json")) as Record<string, unknown>;
       break;
     case "ru":
-      mod = (await import("../messages/ru.json")) as { default: Messages };
+      mod = (await import("../messages/ru.json")) as Record<string, unknown>;
       break;
     case "uz":
-      mod = (await import("../messages/uz.json")) as { default: Messages };
+      mod = (await import("../messages/uz.json")) as Record<string, unknown>;
       break;
     default:
-      mod = (await import("../messages/en.json")) as { default: Messages };
+      mod = (await import("../messages/en.json")) as Record<string, unknown>;
       break;
   }
 
-  messageCache.set(locale, mod.default);
-  return mod.default;
+  const msgs = extractMessages(mod);
+  messageCache.set(locale, msgs);
+  return msgs;
 }
 
 function useHtmlLangSync(locale: SupportedLocale) {

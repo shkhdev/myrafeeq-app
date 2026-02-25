@@ -22,12 +22,12 @@ export function useTogglePrayer() {
       const previous = queryClient.getQueryData<PrayerTrackingResponse>(queryKey);
 
       queryClient.setQueryData<PrayerTrackingResponse>(queryKey, (old) => {
-        if (!old) return old;
+        const existing = old ?? { tracking: {} };
         return {
           tracking: {
-            ...old.tracking,
+            ...existing.tracking,
             [data.date]: {
-              ...(old.tracking[data.date] ?? {}),
+              ...(existing.tracking[data.date] ?? {}),
               [data.prayer]: data.prayed,
             },
           },

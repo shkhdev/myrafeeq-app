@@ -56,9 +56,12 @@ export function usePreferencesSync() {
         .then(() => {
           retryCountRef.current = 0;
         })
-        .catch(() => {
+        .catch((error: unknown) => {
           // biome-ignore lint/suspicious/noConsole: sync error logging
-          console.warn("[PreferencesSync] Failed to sync preferences to backend");
+          console.warn(
+            "[PreferencesSync] Failed to sync:",
+            error instanceof Error ? error.message : error,
+          );
           if (retryCountRef.current < 3) {
             retryCountRef.current += 1;
             const delay = 1000 * 2 ** retryCountRef.current; // 2s, 4s, 8s

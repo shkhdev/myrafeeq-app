@@ -35,7 +35,7 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
       maghrib: true,
       isha: true,
     },
-    reminderTiming: "on_time",
+    reminderTiming: "ON_TIME",
   },
   setStep: (step) =>
     set({ currentStep: step, ...(step === "welcome" ? { storyCardIndex: 0 } : {}) }),
