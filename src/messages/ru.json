@@ -15,6 +15,7 @@
     "stepOf": "Шаг {current} из {total}",
     "checkmark": "Галочка",
     "success": "Успех",
+    "now": "СЕЙЧАС",
     "onboardingComplete": "Настройка завершена",
     "homeComingSoon": "Главный экран скоро появится"
   },

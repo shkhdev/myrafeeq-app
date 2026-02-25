@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
@@ -9,25 +8,25 @@ import { getSDK } from "@/hooks/useTelegramSDK";
 import { getPrayerIcon } from "@/lib/prayer-icons";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 import type { ReminderTiming } from "@/types/onboarding";
+import { REMINDER_OPTIONS } from "@/types/onboarding";
 import type { PrayerName } from "@/types/prayer";
 import { PRAYER_NAMES } from "@/types/prayer";
 import { StepIndicator } from "./StepIndicator";
 
-const REMINDER_OPTIONS: { value: ReminderTiming; labelKey: string; minutes?: string }[] = [
-  { value: "on_time", labelKey: "atPrayerTime" },
-  { value: "5min", labelKey: "minutesBefore", minutes: "5" },
-  { value: "10min", labelKey: "minutesBefore", minutes: "10" },
-  { value: "15min", labelKey: "minutesBefore", minutes: "15" },
-  { value: "30min", labelKey: "minutesBefore", minutes: "30" },
-];
-
 export function NotificationSetup() {
   const t = useTranslations("onboarding.notifications");
-  const store = useOnboardingStore();
   const haptic = useHaptic();
-  const { prayerNotifications, reminderTiming } = store.data;
 
-  const selectedCity = store.data.city;
+  const selectedCity = useOnboardingStore((s) => s.data.city);
+  const latitude = useOnboardingStore((s) => s.data.latitude);
+  const longitude = useOnboardingStore((s) => s.data.longitude);
+  const prayerNotifications = useOnboardingStore((s) => s.data.prayerNotifications);
+  const reminderTiming = useOnboardingStore((s) => s.data.reminderTiming);
+  const setPrayerNotification = useOnboardingStore((s) => s.setPrayerNotification);
+  const setReminderTiming = useOnboardingStore((s) => s.setReminderTiming);
+  const setNotificationsEnabled = useOnboardingStore((s) => s.setNotificationsEnabled);
+  const setStep = useOnboardingStore((s) => s.setStep);
+
   const prayerTimesOptions: { enabled: boolean; timezone?: string; method?: string } = {
     enabled: selectedCity !== null,
   };
@@ -35,30 +34,24 @@ export function NotificationSetup() {
   if (selectedCity?.defaultMethod) prayerTimesOptions.method = selectedCity.defaultMethod;
 
   const prayerTimesQuery = usePrayerTimesByLocation(
-    store.data.latitude ?? selectedCity?.latitude ?? 0,
-    store.data.longitude ?? selectedCity?.longitude ?? 0,
+    latitude ?? selectedCity?.latitude ?? 0,
+    longitude ?? selectedCity?.longitude ?? 0,
     prayerTimesOptions,
   );
   const prayerTimes = prayerTimesQuery.data?.times ?? null;
 
-  const handlePrayerToggle = useCallback(
-    (prayer: PrayerName) => {
-      store.setPrayerNotification(prayer, !prayerNotifications[prayer]);
-      haptic.selectionChanged();
-    },
-    [prayerNotifications, store, haptic],
-  );
+  function handlePrayerToggle(prayer: PrayerName) {
+    setPrayerNotification(prayer, !prayerNotifications[prayer]);
+    haptic.selectionChanged();
+  }
 
-  const handleTimingSelect = useCallback(
-    (timing: ReminderTiming) => {
-      store.setReminderTiming(timing);
-      haptic.selectionChanged();
-    },
-    [store, haptic],
-  );
+  function handleTimingSelect(timing: ReminderTiming) {
+    setReminderTiming(timing);
+    haptic.selectionChanged();
+  }
 
-  const handleEnable = useCallback(async () => {
-    store.setNotificationsEnabled(true);
+  async function handleEnable() {
+    setNotificationsEnabled(true);
     try {
       const sdk = await getSDK();
       if (sdk.requestWriteAccess.isAvailable()) {
@@ -67,17 +60,17 @@ export function NotificationSetup() {
     } catch {
       // Proceed even if declined
     }
-    store.setStep("completion");
-  }, [store]);
+    setStep("completion");
+  }
 
-  const handleSkipNotifications = useCallback(() => {
-    store.setNotificationsEnabled(false);
-    store.setStep("completion");
-  }, [store]);
+  function handleSkipNotifications() {
+    setNotificationsEnabled(false);
+    setStep("completion");
+  }
 
-  const handleBack = useCallback(() => {
-    store.setStep("location");
-  }, [store]);
+  function handleBack() {
+    setStep("location");
+  }
 
   return (
     <div

@@ -1,5 +1,12 @@
 import type { City } from "@/types/city";
-import type { PrayerTimes } from "@/types/prayer";
+import type { PrayerNotificationPrefs, ReminderTiming } from "@/types/onboarding";
+import type {
+  CalculationMethodId,
+  HighLatitudeRule,
+  Madhab,
+  PrayerTimeAdjustments,
+  PrayerTimes,
+} from "@/types/prayer";
 
 // Auth
 export interface AuthResponse {
@@ -17,16 +24,16 @@ export interface UserResponse {
 // Preferences
 export interface UserPreferencesResponse {
   city: City | null;
-  calculationMethod: string;
-  madhab: string;
-  highLatitudeRule: string;
+  calculationMethod: CalculationMethodId;
+  madhab: Madhab;
+  highLatitudeRule: HighLatitudeRule;
   hijriCorrection: number;
-  timeFormat: string;
-  theme: string;
+  timeFormat: "12h" | "24h";
+  theme: "light" | "dark" | "system";
   notificationsEnabled: boolean;
-  reminderTiming: string;
-  prayerNotifications: Record<string, boolean>;
-  manualAdjustments: Record<string, number>;
+  reminderTiming: ReminderTiming;
+  prayerNotifications: PrayerNotificationPrefs;
+  manualAdjustments: PrayerTimeAdjustments;
 }
 
 export interface UpdatePreferencesRequest {

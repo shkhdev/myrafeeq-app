@@ -6,18 +6,9 @@ import { CheckIcon } from "@/components/ui/CheckIcon";
 import { useCompleteOnboarding } from "@/hooks/api/usePreferences";
 import { useHaptic } from "@/hooks/useHaptic";
 import { pauseSync } from "@/hooks/usePreferencesSync";
+import { hydrateFromBackend } from "@/lib/hydrate-preferences";
 import { useAuthStore } from "@/stores/auth-store";
 import { useOnboardingStore } from "@/stores/onboarding-store";
-import { usePreferencesStore } from "@/stores/preferences-store";
-import type { ThemePreference } from "@/stores/theme-store";
-import { useThemeStore } from "@/stores/theme-store";
-import type { PrayerNotificationPrefs } from "@/types/onboarding";
-import type {
-  CalculationMethodId,
-  HighLatitudeRule,
-  Madhab,
-  PrayerTimeAdjustments,
-} from "@/types/prayer";
 
 export function CompletionScreen() {
   const t = useTranslations("onboarding.completion");
@@ -28,6 +19,7 @@ export function CompletionScreen() {
   const hasMutated = useRef(false);
 
   // Submit onboarding data to backend (fire once)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: fire-once effect guarded by hasMutated ref
   useEffect(() => {
     if (hasMutated.current) return;
     hasMutated.current = true;
@@ -49,28 +41,7 @@ export function CompletionScreen() {
         onSuccess: (response) => {
           // Hydrate stores from backend response — pause sync to prevent echoing back
           pauseSync();
-          const prefs = response.preferences;
-          usePreferencesStore.getState().hydrate({
-            city: prefs.city,
-            calculationMethod: prefs.calculationMethod as CalculationMethodId,
-            madhab: prefs.madhab as Madhab,
-            highLatitudeRule: prefs.highLatitudeRule as HighLatitudeRule,
-            hijriCorrection: prefs.hijriCorrection,
-            timeFormat: prefs.timeFormat as "12h" | "24h",
-            notificationsEnabled: prefs.notificationsEnabled,
-            reminderTiming: prefs.reminderTiming as
-              | "on_time"
-              | "5min"
-              | "10min"
-              | "15min"
-              | "30min",
-            prayerNotifications: prefs.prayerNotifications as unknown as PrayerNotificationPrefs,
-            adjustments: prefs.manualAdjustments as unknown as PrayerTimeAdjustments,
-          });
-
-          if (prefs.theme) {
-            useThemeStore.getState().setPreference(prefs.theme as ThemePreference);
-          }
+          hydrateFromBackend(response.preferences);
 
           useAuthStore.getState().setOnboardingCompleted(true);
 
@@ -90,7 +61,7 @@ export function CompletionScreen() {
         },
       },
     );
-  }, [haptic, completeOnboarding, queryClient]);
+  }, []);
 
   return (
     <div

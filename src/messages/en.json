@@ -15,6 +15,7 @@
     "stepOf": "Step {current} of {total}",
     "checkmark": "Checkmark",
     "success": "Success",
+    "now": "NOW",
     "onboardingComplete": "Onboarding complete",
     "homeComingSoon": "Home screen coming soon"
   },

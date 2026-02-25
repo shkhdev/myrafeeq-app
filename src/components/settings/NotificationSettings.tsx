@@ -7,18 +7,11 @@ import { getPrayerIcon } from "@/lib/prayer-icons";
 import { formatTime12h } from "@/lib/prayer-time-utils";
 import { usePreferencesStore } from "@/stores/preferences-store";
 import type { ReminderTiming } from "@/types/onboarding";
+import { REMINDER_OPTIONS } from "@/types/onboarding";
 import type { PrayerName } from "@/types/prayer";
 import { PRAYER_NAMES } from "@/types/prayer";
 
 import { SettingsSection } from "./SettingsSection";
-
-const REMINDER_OPTIONS: { value: ReminderTiming; labelKey: string; minutes?: string }[] = [
-  { value: "on_time", labelKey: "atPrayerTime" },
-  { value: "5min", labelKey: "minutesBefore", minutes: "5" },
-  { value: "10min", labelKey: "minutesBefore", minutes: "10" },
-  { value: "15min", labelKey: "minutesBefore", minutes: "15" },
-  { value: "30min", labelKey: "minutesBefore", minutes: "30" },
-];
 
 export function NotificationSettings() {
   const t = useTranslations("settings");

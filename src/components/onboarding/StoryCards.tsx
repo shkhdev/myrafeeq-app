@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 
 import { useHaptic } from "@/hooks/useHaptic";
@@ -33,17 +33,19 @@ interface UserInfo {
 
 export function StoryCards() {
   const t = useTranslations("onboarding.welcome");
-  const store = useOnboardingStore();
   const haptic = useHaptic();
   const locale = useLocaleStore((s) => s.locale);
   const rtl = isRTL(locale);
+
+  const currentIndex = useOnboardingStore((s) => s.storyCardIndex);
+  const setStoryCardIndex = useOnboardingStore((s) => s.setStoryCardIndex);
+  const setStep = useOnboardingStore((s) => s.setStep);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({ firstName: "", photoUrl: null });
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [cardKey, setCardKey] = useState(0);
 
-  const currentIndex = store.storyCardIndex;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef(Date.now());
   const pausedProgressRef = useRef(0);
@@ -90,7 +92,7 @@ export function StoryCards() {
         if (currentIndex < TOTAL_CARDS - 1) {
           setProgress(0);
           pausedProgressRef.current = 0;
-          store.setStoryCardIndex(currentIndex + 1);
+          setStoryCardIndex(currentIndex + 1);
           setCardKey((k) => k + 1);
         }
       }
@@ -99,85 +101,75 @@ export function StoryCards() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentIndex, isPaused, store]);
+  }, [currentIndex, isPaused, setStoryCardIndex]);
 
-  const goToCard = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < TOTAL_CARDS) {
-        store.setStoryCardIndex(index);
-        setProgress(0);
-        pausedProgressRef.current = 0;
-        setCardKey((k) => k + 1);
-        haptic.impact("light");
-      }
-    },
-    [store, haptic],
-  );
+  function goToCard(index: number) {
+    if (index >= 0 && index < TOTAL_CARDS) {
+      setStoryCardIndex(index);
+      setProgress(0);
+      pausedProgressRef.current = 0;
+      setCardKey((k) => k + 1);
+      haptic.impact("light");
+    }
+  }
 
-  const handleSkip = useCallback(() => {
-    store.setStep("location");
-  }, [store]);
+  function handleSkip() {
+    setStep("location");
+  }
 
-  const handleGetStarted = useCallback(() => {
-    store.setStep("location");
-  }, [store]);
+  function handleGetStarted() {
+    setStep("location");
+  }
 
   // Pointer events for swipe + tap + pause
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      pointerStartX.current = e.clientX;
-      pointerStartY.current = e.clientY;
-      setIsPaused(true);
-      pausedProgressRef.current = progress;
-    },
-    [progress],
-  );
+  function handlePointerDown(e: React.PointerEvent) {
+    pointerStartX.current = e.clientX;
+    pointerStartY.current = e.clientY;
+    setIsPaused(true);
+    pausedProgressRef.current = progress;
+  }
 
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      setIsPaused(false);
-      const dx = e.clientX - pointerStartX.current;
-      const dy = e.clientY - pointerStartY.current;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+  function handlePointerUp(e: React.PointerEvent) {
+    setIsPaused(false);
+    const dx = e.clientX - pointerStartX.current;
+    const dy = e.clientY - pointerStartY.current;
+    const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < TAP_THRESHOLD) {
-        // Tap — use left 30% / right 70% zones
-        const screenWidth = window.innerWidth;
-        const tapX = e.clientX;
-        const isLeftZone = rtl ? tapX > screenWidth * 0.7 : tapX < screenWidth * 0.3;
+    if (distance < TAP_THRESHOLD) {
+      // Tap — use left 30% / right 70% zones
+      const screenWidth = window.innerWidth;
+      const tapX = e.clientX;
+      const isLeftZone = rtl ? tapX > screenWidth * 0.7 : tapX < screenWidth * 0.3;
 
-        if (isLeftZone && currentIndex > 0) {
-          goToCard(currentIndex - 1);
-        } else if (currentIndex < TOTAL_CARDS - 1) {
-          goToCard(currentIndex + 1);
-        }
-      } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
-        // Horizontal swipe
-        const isSwipeForward = rtl ? dx > 0 : dx < 0;
-        if (isSwipeForward && currentIndex < TOTAL_CARDS - 1) {
-          goToCard(currentIndex + 1);
-        } else if (!isSwipeForward && currentIndex > 0) {
-          goToCard(currentIndex - 1);
-        }
+      if (isLeftZone && currentIndex > 0) {
+        goToCard(currentIndex - 1);
+      } else if (currentIndex < TOTAL_CARDS - 1) {
+        goToCard(currentIndex + 1);
       }
-    },
-    [currentIndex, goToCard, rtl],
-  );
+    } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < Math.abs(dx)) {
+      // Horizontal swipe
+      const isSwipeForward = rtl ? dx > 0 : dx < 0;
+      if (isSwipeForward && currentIndex < TOTAL_CARDS - 1) {
+        goToCard(currentIndex + 1);
+      } else if (!isSwipeForward && currentIndex > 0) {
+        goToCard(currentIndex - 1);
+      }
+    }
+  }
 
-  // Keyboard navigation
+  // Keyboard navigation — goToCard is auto-memoized by React Compiler
+  // biome-ignore lint/correctness/useExhaustiveDependencies: goToCard is stable via React Compiler
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowRight") {
-        const next = rtl ? currentIndex - 1 : currentIndex + 1;
-        goToCard(next);
+        goToCard(rtl ? currentIndex - 1 : currentIndex + 1);
       } else if (e.key === "ArrowLeft") {
-        const prev = rtl ? currentIndex + 1 : currentIndex - 1;
-        goToCard(prev);
+        goToCard(rtl ? currentIndex + 1 : currentIndex - 1);
       }
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, goToCard, rtl]);
+  }, [currentIndex, rtl]);
 
   const cards: CardData[] = [
     {
@@ -252,7 +244,6 @@ export function StoryCards() {
         {currentCard?.showAvatar && (
           <div className="animate-fade-in-up flex flex-col items-center gap-2">
             {userInfo.photoUrl ? (
-              // biome-ignore lint/performance/noImgElement: external Telegram avatar URL
               <img src={userInfo.photoUrl} alt="" className="h-14 w-14 rounded-full" />
             ) : userInfo.firstName ? (
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15">
@@ -290,7 +281,6 @@ export function StoryCards() {
             {t("getStarted")}
           </button>
         )}
-
       </div>
     </div>
   );

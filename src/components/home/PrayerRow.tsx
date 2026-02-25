@@ -78,7 +78,7 @@ export function PrayerRow({
         <span className={nameClass}>{tCommon(prayer)}</span>
         {isActive && (
           <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
-            NOW
+            {tCommon("now")}
           </span>
         )}
       </span>

@@ -43,6 +43,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
 
   if (response.status === 204) {
+    // No current endpoint returns 204. If one is added, callers should type T accordingly.
     return undefined as T;
   }
 
