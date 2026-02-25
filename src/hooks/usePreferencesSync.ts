@@ -6,17 +6,18 @@ import { useThemeStore } from "@/stores/theme-store";
 import type { UpdatePreferencesRequest } from "@/types/api";
 
 /**
- * Module-level flag to skip the next sync. Called externally by hydration code
- * (AuthProvider, CompletionScreen) to prevent echoing backend data back.
+ * Module-level timestamp used to suppress sync-back after hydration.
+ * Any store change within the grace window is silently ignored.
  *
- * This is intentionally module-level because pauseSync() is called from outside
- * React (store hydration callbacks) and must be synchronously accessible.
+ * A boolean flag was insufficient because hydrateFromBackend() updates two
+ * stores (preferences + theme), triggering two subscription callbacks — the
+ * first would consume a boolean flag, and the second would sync defaults.
  */
-let skipNextSync = false;
+let skipUntil = 0;
 
 /** Call before hydrating stores from backend to prevent a redundant sync-back. */
 export function pauseSync() {
-  skipNextSync = true;
+  skipUntil = Date.now() + 200;
 }
 
 function buildRequest(): UpdatePreferencesRequest {
@@ -46,11 +47,28 @@ function buildRequest(): UpdatePreferencesRequest {
  */
 export function usePreferencesSync() {
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryCountRef = useRef(0);
 
   useEffect(() => {
+    function doSync() {
+      updatePreferences(buildRequest())
+        .then(() => {
+          retryCountRef.current = 0;
+        })
+        .catch(() => {
+          // biome-ignore lint/suspicious/noConsole: sync error logging
+          console.warn("[PreferencesSync] Failed to sync preferences to backend");
+          if (retryCountRef.current < 3) {
+            retryCountRef.current += 1;
+            const delay = 1000 * 2 ** retryCountRef.current; // 2s, 4s, 8s
+            retryTimerRef.current = setTimeout(doSync, delay);
+          }
+        });
+    }
+
     function scheduleSync() {
-      if (skipNextSync) {
-        skipNextSync = false;
+      if (Date.now() < skipUntil) {
         return;
       }
 
@@ -58,12 +76,9 @@ export function usePreferencesSync() {
       if (!token) return;
 
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
-      syncTimerRef.current = setTimeout(() => {
-        updatePreferences(buildRequest()).catch(() => {
-          // biome-ignore lint/suspicious/noConsole: sync error logging
-          console.warn("[PreferencesSync] Failed to sync preferences to backend");
-        });
-      }, 500);
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+      retryCountRef.current = 0;
+      syncTimerRef.current = setTimeout(doSync, 500);
     }
 
     const unsubPrefs = usePreferencesStore.subscribe(scheduleSync);
@@ -73,6 +88,7 @@ export function usePreferencesSync() {
       unsubPrefs();
       unsubTheme();
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
     };
   }, []);
 }

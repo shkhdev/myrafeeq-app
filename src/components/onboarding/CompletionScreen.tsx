@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 
 import { CheckIcon } from "@/components/ui/CheckIcon";
@@ -17,22 +17,24 @@ export function CompletionScreen() {
   const completeOnboarding = useCompleteOnboarding();
   const queryClient = useQueryClient();
   const hasMutated = useRef(false);
+  const [failed, setFailed] = useState(false);
 
-  // Submit onboarding data to backend (fire once)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: fire-once effect guarded by hasMutated ref
-  useEffect(() => {
-    if (hasMutated.current) return;
-    hasMutated.current = true;
-
-    haptic.notification("success");
-
+  function submit() {
     const { data } = useOnboardingStore.getState();
 
+    if (!data.city?.id) {
+      // Should never reach here — location step should enforce city selection.
+      // Defensive fallback: navigate to home and let the user set city in settings.
+      useOnboardingStore.getState().completeOnboarding();
+      return;
+    }
+
+    setFailed(false);
     completeOnboarding.mutate(
       {
-        cityId: data.city?.id ?? "",
-        latitude: data.latitude ?? data.city?.latitude ?? 0,
-        longitude: data.longitude ?? data.city?.longitude ?? 0,
+        cityId: data.city.id,
+        latitude: data.latitude ?? data.city.latitude,
+        longitude: data.longitude ?? data.city.longitude,
         notificationsEnabled: data.notificationsEnabled,
         prayerNotifications: data.prayerNotifications as unknown as Record<string, boolean>,
         reminderTiming: data.reminderTiming,
@@ -54,13 +56,21 @@ export function CompletionScreen() {
           }, 1500);
         },
         onError: () => {
-          // Even on error, eventually navigate to home (fallback)
-          setTimeout(() => {
-            useOnboardingStore.getState().completeOnboarding();
-          }, 2500);
+          setFailed(true);
+          haptic.notification("error");
         },
       },
     );
+  }
+
+  // Submit onboarding data to backend (fire once)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: fire-once effect guarded by hasMutated ref
+  useEffect(() => {
+    if (hasMutated.current) return;
+    hasMutated.current = true;
+
+    haptic.notification("success");
+    submit();
   }, []);
 
   return (
@@ -79,6 +89,19 @@ export function CompletionScreen() {
       <p className="animate-fade-in-up-2 mx-auto mt-3 max-w-[280px] text-center text-sm leading-relaxed text-on-surface-muted">
         {t("description")}
       </p>
+
+      {failed && (
+        <button
+          type="button"
+          onClick={() => {
+            hasMutated.current = false;
+            submit();
+          }}
+          className="mt-6 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+        >
+          {t("retry")}
+        </button>
+      )}
     </div>
   );
 }

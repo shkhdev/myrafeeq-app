@@ -25,6 +25,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.add("dark");
       return () => {
         root.classList.remove("theme-override");
+        root.classList.remove("dark");
       };
     }
 

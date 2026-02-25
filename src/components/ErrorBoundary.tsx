@@ -1,5 +1,6 @@
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
+import { useTranslations } from "use-intl";
 
 interface Props {
   children: ReactNode;
@@ -7,6 +8,23 @@ interface Props {
 
 interface State {
   hasError: boolean;
+}
+
+function ErrorFallback({ onReset }: { onReset: () => void }) {
+  const t = useTranslations("errors");
+
+  return (
+    <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-surface px-6 text-center">
+      <p className="text-title font-semibold text-on-surface">{t("somethingWentWrong")}</p>
+      <button
+        type="button"
+        onClick={onReset}
+        className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+      >
+        {t("tryAgain")}
+      </button>
+    </div>
+  );
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -26,18 +44,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-surface px-6 text-center">
-          <p className="text-title font-semibold text-on-surface">Something went wrong</p>
-          <button
-            type="button"
-            onClick={() => this.setState({ hasError: false })}
-            className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-        </div>
-      );
+      return <ErrorFallback onReset={() => this.setState({ hasError: false })} />;
     }
 
     return this.props.children;

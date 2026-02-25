@@ -1,6 +1,8 @@
+import { useCallback } from "react";
 import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
+import { useTelegramBackButton } from "@/hooks/useTelegramBackButton";
 import { useAppStore } from "@/stores/app-store";
 
 import { AboutSection } from "./AboutSection";
@@ -13,7 +15,8 @@ export function SettingsScreen() {
   const t = useTranslations("settings");
   const setScreen = useAppStore((s) => s.setScreen);
 
-  const handleBack = () => setScreen("home");
+  const handleBack = useCallback(() => setScreen("home"), [setScreen]);
+  useTelegramBackButton(handleBack);
 
   return (
     <div

@@ -6,6 +6,8 @@ import type { UserPreferencesResponse } from "@/types/api";
 export function hydrateFromBackend(prefs: UserPreferencesResponse) {
   usePreferencesStore.getState().hydrate({
     city: prefs.city,
+    latitude: prefs.city?.latitude ?? null,
+    longitude: prefs.city?.longitude ?? null,
     calculationMethod: prefs.calculationMethod,
     madhab: prefs.madhab,
     highLatitudeRule: prefs.highLatitudeRule,

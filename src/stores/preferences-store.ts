@@ -51,6 +51,8 @@ interface PreferencesState {
 /** Fields that can be hydrated from the backend preferences response. */
 export interface HydratablePreferences {
   city: City | null;
+  latitude: number | null;
+  longitude: number | null;
   calculationMethod: CalculationMethodId;
   madhab: Madhab;
   highLatitudeRule: HighLatitudeRule;

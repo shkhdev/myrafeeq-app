@@ -38,6 +38,7 @@ export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
   const prayedCount = PRAYER_NAMES.filter((p) => isPrayed(p)).length;
 
   const handleToggle = (prayer: PrayerName) => {
+    if (toggleMutation.isPending) return;
     toggleMutation.mutate({ date: today, prayer, prayed: !isPrayed(prayer) });
     haptic.selectionChanged();
   };

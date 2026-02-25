@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useHaptic } from "@/hooks/useHaptic";
 import { getPrayerStats, getPrayerTracking, togglePrayer } from "@/lib/api/prayer-tracking";
 import type { PrayerTrackingResponse } from "@/types/api";
 
@@ -11,6 +12,7 @@ export function usePrayerTracking(date?: string) {
 
 export function useTogglePrayer() {
   const queryClient = useQueryClient();
+  const haptic = useHaptic();
 
   return useMutation({
     mutationFn: togglePrayer,
@@ -38,6 +40,7 @@ export function useTogglePrayer() {
       if (context?.previous) {
         queryClient.setQueryData(["prayer-tracking", data.date], context.previous);
       }
+      haptic.notification("error");
     },
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: ["prayer-tracking", variables.date] });

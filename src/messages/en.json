@@ -1,4 +1,8 @@
 {
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try again"
+  },
   "common": {
     "goBack": "Go back",
     "changeLanguage": "Change language",
@@ -28,7 +32,9 @@
     "prayersCompleted": "{count}/{total} prayed",
     "inTime": "in {time}",
     "allPrayersCompleted": "All prayers completed",
-    "settings": "Settings"
+    "settings": "Settings",
+    "loadError": "Failed to load prayer times",
+    "retry": "Retry"
   },
   "settings": {
     "title": "Settings",
@@ -121,7 +127,8 @@
     },
     "completion": {
       "title": "Ma sha Allah, You're All Set!",
-      "description": "Your prayer companion is ready. May your journey with MyRafeeq bring you closer to Allah."
+      "description": "Your prayer companion is ready. May your journey with MyRafeeq bring you closer to Allah.",
+      "retry": "Try again"
     }
   }
 }

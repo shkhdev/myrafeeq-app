@@ -13,10 +13,55 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Re-validate Telegram initData and refresh the auth token.
+ * Returns true if re-auth succeeded, false otherwise.
+ */
+async function tryReauth(): Promise<boolean> {
+  try {
+    const sdk = await import("@telegram-apps/sdk-react");
+    let initData: string | undefined;
+    try {
+      initData = sdk.initDataRaw();
+    } catch {
+      // Signal not initialized
+    }
+    if (!initData) {
+      try {
+        initData = sdk.retrieveRawInitData();
+      } catch {
+        // Launch params not available
+      }
+    }
+    if (!initData) return false;
+
+    const response = await fetch(`${API_URL}/api/auth/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ initData }),
+    });
+    if (!response.ok) return false;
+
+    const data = (await response.json()) as {
+      token: string;
+      user: { telegramId: number; onboardingCompleted: boolean };
+    };
+    useAuthStore
+      .getState()
+      .setAuth(data.token, data.user.telegramId, data.user.onboardingCompleted);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Track whether a re-auth attempt is already in progress to avoid duplicates. */
+let reauthPromise: Promise<boolean> | null = null;
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = useAuthStore.getState().token;
   const headers: Record<string, string> = {
-    "ngrok-skip-browser-warning": "1",
+    ...(import.meta.env.DEV ? { "ngrok-skip-browser-warning": "1" } : {}),
     ...((options.headers as Record<string, string>) ?? {}),
   };
 
@@ -32,6 +77,33 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...options,
     headers,
   });
+
+  // Handle 401 — attempt transparent re-auth, then retry the original request once
+  if (response.status === 401 && token) {
+    if (!reauthPromise) {
+      reauthPromise = tryReauth().finally(() => {
+        reauthPromise = null;
+      });
+    }
+    const refreshed = await reauthPromise;
+    if (refreshed) {
+      const newToken = useAuthStore.getState().token;
+      headers.Authorization = `Bearer ${newToken}`;
+      const retryResponse = await fetch(`${API_URL}${path}`, { ...options, headers });
+      if (!retryResponse.ok) {
+        const body = (await retryResponse.json().catch(() => null)) as ApiErrorResponse | null;
+        throw new ApiError(
+          body?.error?.code ?? "UNKNOWN_ERROR",
+          body?.error?.message ?? `Request failed with status ${retryResponse.status}`,
+          retryResponse.status,
+        );
+      }
+      if (retryResponse.status === 204) return undefined as T;
+      return retryResponse.json() as Promise<T>;
+    }
+    // Re-auth failed — clear auth so the app can show the appropriate state
+    useAuthStore.getState().clearAuth();
+  }
 
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as ApiErrorResponse | null;

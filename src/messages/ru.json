@@ -1,4 +1,8 @@
 {
+  "errors": {
+    "somethingWentWrong": "Что-то пошло не так",
+    "tryAgain": "Попробовать снова"
+  },
   "common": {
     "goBack": "Назад",
     "changeLanguage": "Сменить язык",
@@ -28,7 +32,9 @@
     "prayersCompleted": "{count}/{total} совершено",
     "inTime": "через {time}",
     "allPrayersCompleted": "Все намазы совершены",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "loadError": "Не удалось загрузить время намаза",
+    "retry": "Повторить"
   },
   "settings": {
     "title": "Настройки",
@@ -121,7 +127,8 @@
     },
     "completion": {
       "title": "Ма ша Аллах, всё готово!",
-      "description": "Ваш помощник готов. Да будет благословенным ваш путь с MyRafeeq."
+      "description": "Ваш помощник готов. Да будет благословенным ваш путь с MyRafeeq.",
+      "retry": "Попробовать снова"
     }
   }
 }

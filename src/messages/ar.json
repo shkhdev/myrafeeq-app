@@ -1,4 +1,8 @@
 {
+  "errors": {
+    "somethingWentWrong": "حدث خطأ ما",
+    "tryAgain": "حاول مرة أخرى"
+  },
   "common": {
     "goBack": "رجوع",
     "changeLanguage": "تغيير اللغة",
@@ -28,7 +32,9 @@
     "prayersCompleted": "{count}/{total} صُلّيت",
     "inTime": "بعد {time}",
     "allPrayersCompleted": "تمت جميع الصلوات",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "loadError": "فشل تحميل أوقات الصلاة",
+    "retry": "إعادة المحاولة"
   },
   "settings": {
     "title": "الإعدادات",
@@ -121,7 +127,8 @@
     },
     "completion": {
       "title": "ما شاء الله، كل شيء جاهز!",
-      "description": "رفيقك MyRafeeq جاهز. جعل الله رحلتك مباركة."
+      "description": "رفيقك MyRafeeq جاهز. جعل الله رحلتك مباركة.",
+      "retry": "حاول مرة أخرى"
     }
   }
 }

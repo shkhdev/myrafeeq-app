@@ -1,4 +1,8 @@
 {
+  "errors": {
+    "somethingWentWrong": "Xatolik yuz berdi",
+    "tryAgain": "Qayta urinish"
+  },
   "common": {
     "goBack": "Orqaga",
     "changeLanguage": "Tilni o'zgartirish",
@@ -28,7 +32,9 @@
     "prayersCompleted": "{count}/{total} o'qildi",
     "inTime": "{time} dan keyin",
     "allPrayersCompleted": "Barcha namozlar o'qildi",
-    "settings": "Sozlamalar"
+    "settings": "Sozlamalar",
+    "loadError": "Namoz vaqtlarini yuklab bo'lmadi",
+    "retry": "Qayta urinish"
   },
   "settings": {
     "title": "Sozlamalar",
@@ -121,7 +127,8 @@
     },
     "completion": {
       "title": "Ma Shaa Alloh, hammasi tayyor!",
-      "description": "Namoz hamrohing tayyor. MyRafeeq bilan safaringiz muborak bo'lsin."
+      "description": "Namoz hamrohing tayyor. MyRafeeq bilan safaringiz muborak bo'lsin.",
+      "retry": "Qayta urinish"
     }
   }
 }
