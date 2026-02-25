@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { pauseSync } from "@/hooks/usePreferencesSync";
 import { validateTelegramAuth } from "@/lib/api/auth";
 import { getPreferences } from "@/lib/api/preferences";
@@ -6,6 +6,7 @@ import { hydrateFromBackend } from "@/lib/hydrate-preferences";
 import { useAuthStore } from "@/stores/auth-store";
 
 type AuthStatus = "loading" | "ready" | "no-initdata" | "error";
+type AuthError = { title: string; message: string };
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -13,6 +14,10 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>("loading");
+  const errorRef = useRef<AuthError>({
+    title: "Connection failed",
+    message: "Unable to connect to the server. Please check your connection and try again.",
+  });
 
   const authenticate = useCallback(async (signal: { cancelled: boolean }) => {
     setStatus("loading");
@@ -75,6 +80,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // biome-ignore lint/suspicious/noConsole: auth error logging
       console.error("[AuthProvider] Authentication failed:", error);
       if (!signal.cancelled) {
+        if (error instanceof Error && "code" in error) {
+          errorRef.current = {
+            title: "Authentication failed",
+            message: (error as { code: string }).code === "INVALID_AUTH"
+              ? "Telegram authentication was rejected by the server. Please reopen the app from Telegram."
+              : error.message,
+          };
+        } else if (error instanceof TypeError) {
+          errorRef.current = {
+            title: "Connection failed",
+            message: "Unable to connect to the server. Please check your connection and try again.",
+          };
+        } else {
+          errorRef.current = {
+            title: "Something went wrong",
+            message: error instanceof Error ? error.message : "An unexpected error occurred.",
+          };
+        }
         setStatus("error");
       }
     }
@@ -106,10 +129,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   if (status === "error") {
     return (
       <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-surface px-6 text-center">
-        <p className="text-lg font-semibold text-on-surface">Connection failed</p>
-        <p className="max-w-[280px] text-sm text-on-surface-muted">
-          Unable to connect to the server. Please check your connection and try again.
-        </p>
+        <p className="text-lg font-semibold text-on-surface">{errorRef.current.title}</p>
+        <p className="max-w-[280px] text-sm text-on-surface-muted">{errorRef.current.message}</p>
         <button
           type="button"
           onClick={() => {
