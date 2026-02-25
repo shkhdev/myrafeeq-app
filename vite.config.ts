@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
@@ -8,6 +9,10 @@ export default defineConfig({
       babel: {
         plugins: ["babel-plugin-react-compiler"],
       },
+    }),
+    sentryVitePlugin({
+      org: "dev-6v",
+      project: "javascript-react",
     }),
   ],
   resolve: {
@@ -20,5 +25,6 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    sourcemap: "hidden",
   },
 });
