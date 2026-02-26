@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "use-intl";
-
+import { useTimeFormatter } from "@/hooks/useTimeFormatter";
 import { getGradientStyle, getGradientTextColor } from "@/lib/prayer-gradients";
 import {
-  formatTime12h,
   getCurrentPrayerPeriod,
   getMinutesUntil,
   getNextPrayer,
   type PrayerTimeSlot,
 } from "@/lib/prayer-time-utils";
-import { usePreferencesStore } from "@/stores/preferences-store";
 import type { PrayerTimes } from "@/types/prayer";
 
 interface PrayerHeroCardProps {
@@ -32,19 +30,40 @@ function computeHeroState(times: PrayerTimes): HeroState {
 export function PrayerHeroCard({ prayerTimes }: PrayerHeroCardProps) {
   const t = useTranslations("home");
   const tCommon = useTranslations("common");
-  const timeFormat = usePreferencesStore((s) => s.timeFormat);
+  const formatTime = useTimeFormatter();
   const [state, setState] = useState(() => computeHeroState(prayerTimes));
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // Recalculate immediately when prayer times change
+    setState(computeHeroState(prayerTimes));
+
+    // Sync interval to the next minute boundary for accurate countdowns
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+    const msUntilNextMinute = (60 - new Date().getSeconds()) * 1000;
+    const timeoutId = setTimeout(() => {
       setState(computeHeroState(prayerTimes));
-    }, 60_000);
-    return () => clearInterval(interval);
+      intervalId = setInterval(() => {
+        setState(computeHeroState(prayerTimes));
+      }, 60_000);
+    }, msUntilNextMinute);
+
+    // Recalculate when returning from background (tab/app switch)
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        setState(computeHeroState(prayerTimes));
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [prayerTimes]);
 
   const gradientSlot = state.currentPeriod ?? "isha";
   const textColor = getGradientTextColor();
-  const formatTime = timeFormat === "12h" ? formatTime12h : (v: string) => v;
 
   function fmtCountdown(totalMinutes: number): string {
     if (totalMinutes <= 0) return t("timeUntilMinutes", { minutes: 0 });

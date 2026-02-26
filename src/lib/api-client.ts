@@ -60,10 +60,14 @@ async function tryReauth(): Promise<boolean> {
 /** Track whether a re-auth attempt is already in progress to avoid duplicates. */
 let reauthPromise: Promise<boolean> | null = null;
 
+const REQUEST_TIMEOUT_MS = 15_000;
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = useAuthStore.getState().token;
   const headers: Record<string, string> = {
-    ...(API_URL.includes("ngrok") ? { "ngrok-skip-browser-warning": "1" } : {}),
+    ...(import.meta.env.DEV && API_URL.includes("ngrok")
+      ? { "ngrok-skip-browser-warning": "1" }
+      : {}),
     ...((options.headers as Record<string, string>) ?? {}),
   };
 
@@ -75,10 +79,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   // Handle 401 — attempt transparent re-auth, then retry the original request once
   if (response.status === 401 && token) {

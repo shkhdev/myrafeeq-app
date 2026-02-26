@@ -46,8 +46,8 @@ export interface UpdatePreferencesRequest {
   theme?: string;
   notificationsEnabled?: boolean;
   reminderTiming?: string;
-  prayerNotifications?: Record<string, boolean>;
-  manualAdjustments?: Record<string, number>;
+  prayerNotifications?: PrayerNotificationPrefs;
+  manualAdjustments?: PrayerTimeAdjustments;
 }
 
 export interface OnboardingRequest {
@@ -55,7 +55,7 @@ export interface OnboardingRequest {
   latitude: number;
   longitude: number;
   notificationsEnabled: boolean;
-  prayerNotifications: Record<string, boolean>;
+  prayerNotifications: PrayerNotificationPrefs;
   reminderTiming: string;
 }
 

@@ -1,8 +1,7 @@
 import { useTranslations } from "use-intl";
 
+import { useTimeFormatter } from "@/hooks/useTimeFormatter";
 import { getPrayerIcon } from "@/lib/prayer-icons";
-import { formatTime12h } from "@/lib/prayer-time-utils";
-import { usePreferencesStore } from "@/stores/preferences-store";
 import type { PrayerName } from "@/types/prayer";
 
 interface PrayerRowProps {
@@ -34,9 +33,8 @@ export function PrayerRow({
   onToggle,
 }: PrayerRowProps) {
   const tCommon = useTranslations("common");
-  const timeFormat = usePreferencesStore((s) => s.timeFormat);
+  const formatTime = useTimeFormatter();
   const Icon = getPrayerIcon(prayer);
-  const formatTime = timeFormat === "12h" ? formatTime12h : (t: string) => t;
 
   // Past + unchecked rows are dimmed; checking restores full opacity
   const dimRow = isPast && !isPrayed;

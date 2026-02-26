@@ -34,8 +34,8 @@ function buildRequest(): UpdatePreferencesRequest {
     theme,
     notificationsEnabled: prefs.notificationsEnabled,
     reminderTiming: prefs.reminderTiming,
-    prayerNotifications: prefs.prayerNotifications as unknown as Record<string, boolean>,
-    manualAdjustments: prefs.adjustments as unknown as Record<string, number>,
+    prayerNotifications: prefs.prayerNotifications,
+    manualAdjustments: prefs.adjustments,
   };
   if (prefs.city) {
     req.cityId = prefs.city.id;

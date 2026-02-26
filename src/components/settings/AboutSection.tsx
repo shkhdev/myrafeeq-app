@@ -1,4 +1,5 @@
 import { useTranslations } from "use-intl";
+import { APP_VERSION } from "@/env";
 
 import { SettingsSection } from "./SettingsSection";
 
@@ -13,7 +14,7 @@ export function AboutSection() {
           <p className="mt-0.5 text-xs text-on-surface-muted">{t("appDescription")}</p>
         </div>
         <span className="text-xs tabular-nums text-on-surface-muted">
-          {t("version", { version: "0.1.0" })}
+          {t("version", { version: APP_VERSION })}
         </span>
       </div>
     </SettingsSection>

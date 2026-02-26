@@ -2,7 +2,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 
+import { Button } from "@/components/ui/Button";
 import { CheckIcon } from "@/components/ui/CheckIcon";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useCompleteOnboarding } from "@/hooks/api/usePreferences";
 import { useHaptic } from "@/hooks/useHaptic";
 import { pauseSync } from "@/hooks/usePreferencesSync";
@@ -36,7 +38,7 @@ export function CompletionScreen() {
         latitude: data.latitude ?? data.city.latitude,
         longitude: data.longitude ?? data.city.longitude,
         notificationsEnabled: data.notificationsEnabled,
-        prayerNotifications: data.prayerNotifications as unknown as Record<string, boolean>,
+        prayerNotifications: data.prayerNotifications,
         reminderTiming: data.reminderTiming,
       },
       {
@@ -74,10 +76,7 @@ export function CompletionScreen() {
   }, []);
 
   return (
-    <div
-      className="flex flex-col items-center justify-center bg-surface px-6"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
+    <ScreenLayout className="items-center justify-center px-6">
       {/* Animated checkmark */}
       <div className="animate-scale-in flex h-24 w-24 items-center justify-center rounded-full bg-primary/15">
         <CheckIcon size={48} role="img" ariaLabel={tCommon("success")} animated />
@@ -91,17 +90,17 @@ export function CompletionScreen() {
       </p>
 
       {failed && (
-        <button
-          type="button"
+        <Button
+          size="md"
+          className="mt-6"
           onClick={() => {
             hasMutated.current = false;
             submit();
           }}
-          className="mt-6 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
         >
           {t("retry")}
-        </button>
+        </Button>
       )}
-    </div>
+    </ScreenLayout>
   );
 }

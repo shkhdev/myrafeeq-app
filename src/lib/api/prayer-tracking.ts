@@ -1,4 +1,9 @@
 import { api } from "@/lib/api-client";
+import {
+  PrayerStatsResponseSchema,
+  PrayerTrackingResponseSchema,
+  TogglePrayerResponseSchema,
+} from "@/lib/api-schemas";
 import type {
   PrayerStatsResponse,
   PrayerTrackingResponse,
@@ -6,18 +11,21 @@ import type {
   TogglePrayerResponse,
 } from "@/types/api";
 
-export function getPrayerTracking(params?: {
+export async function getPrayerTracking(params?: {
   date?: string;
   from?: string;
   to?: string;
 }): Promise<PrayerTrackingResponse> {
-  return api.get<PrayerTrackingResponse>("/api/prayer-tracking", params);
+  const data = await api.get<PrayerTrackingResponse>("/api/prayer-tracking", params);
+  return PrayerTrackingResponseSchema.parse(data);
 }
 
-export function togglePrayer(data: TogglePrayerRequest): Promise<TogglePrayerResponse> {
-  return api.post<TogglePrayerResponse>("/api/prayer-tracking/toggle", data);
+export async function togglePrayer(data: TogglePrayerRequest): Promise<TogglePrayerResponse> {
+  const result = await api.post<TogglePrayerResponse>("/api/prayer-tracking/toggle", data);
+  return TogglePrayerResponseSchema.parse(result);
 }
 
-export function getPrayerStats(period: string): Promise<PrayerStatsResponse> {
-  return api.get<PrayerStatsResponse>("/api/prayer-tracking/stats", { period });
+export async function getPrayerStats(period: string): Promise<PrayerStatsResponse> {
+  const data = await api.get<PrayerStatsResponse>("/api/prayer-tracking/stats", { period });
+  return PrayerStatsResponseSchema.parse(data);
 }

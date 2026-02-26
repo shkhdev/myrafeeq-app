@@ -1,5 +1,7 @@
 import { useTranslations } from "use-intl";
 
+import { Button } from "@/components/ui/Button";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
 import { usePreferencesStore } from "@/stores/preferences-store";
 
@@ -14,10 +16,7 @@ export function HomeScreen() {
   const prayerTimes = data?.[0]?.times ?? null;
 
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
+    <ScreenLayout>
       <HomeHeader city={city} />
       {isLoading ? (
         <div className="flex flex-1 items-center justify-center">
@@ -26,13 +25,9 @@ export function HomeScreen() {
       ) : isError ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
           <p className="text-sm text-on-surface-muted">{t("loadError")}</p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
-          >
+          <Button size="md" onClick={() => refetch()}>
             {t("retry")}
-          </button>
+          </Button>
         </div>
       ) : prayerTimes ? (
         <>
@@ -42,6 +37,6 @@ export function HomeScreen() {
       ) : null}
       {/* Bottom safe area padding */}
       <div className="shrink-0" style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 1rem)" }} />
-    </div>
+    </ScreenLayout>
   );
 }

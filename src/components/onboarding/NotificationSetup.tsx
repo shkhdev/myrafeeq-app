@@ -1,7 +1,10 @@
 import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
+import { Button } from "@/components/ui/Button";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
+import { TopBar } from "@/components/ui/TopBar";
 import { usePrayerTimesByLocation } from "@/hooks/api/usePrayerTimes";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getSDK } from "@/hooks/useTelegramSDK";
@@ -73,19 +76,11 @@ export function NotificationSetup() {
   }
 
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
-      {/* Top bar: back + step indicator */}
-      <div
-        className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
-      >
-        <BackArrow onClick={handleBack} />
-        <StepIndicator current={3} total={4} />
-        <div className="w-11" />
-      </div>
+    <ScreenLayout>
+      <TopBar
+        left={<BackArrow onClick={handleBack} />}
+        center={<StepIndicator current={3} total={4} />}
+      />
 
       {/* Compact header — no icon, minimal spacing */}
       <div className="animate-fade-in-up px-6 pt-3">
@@ -157,21 +152,13 @@ export function NotificationSetup() {
         className="mt-auto flex flex-col gap-3 px-6 pt-6"
         style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
       >
-        <button
-          type="button"
-          onClick={handleEnable}
-          className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-        >
+        <Button onClick={handleEnable} className="w-full">
           {t("enableReminders")}
-        </button>
-        <button
-          type="button"
-          onClick={handleSkipNotifications}
-          className="flex h-11 items-center justify-center rounded-xl text-sm font-medium text-on-surface-muted transition-colors hover:text-on-surface/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30"
-        >
+        </Button>
+        <Button variant="ghost" size="sm" onClick={handleSkipNotifications} className="w-full">
           {t("maybeLater")}
-        </button>
+        </Button>
       </div>
-    </div>
+    </ScreenLayout>
   );
 }

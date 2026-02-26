@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/react";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/Button";
 import { pauseSync } from "@/hooks/usePreferencesSync";
 import { validateTelegramAuth } from "@/lib/api/auth";
 import { getPreferences } from "@/lib/api/preferences";
@@ -135,16 +136,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-surface px-6 text-center">
         <p className="text-lg font-semibold text-on-surface">{errorRef.current.title}</p>
         <p className="max-w-[280px] text-sm text-on-surface-muted">{errorRef.current.message}</p>
-        <button
-          type="button"
+        <Button
+          size="md"
           onClick={() => {
             const signal = { cancelled: false };
             authenticate(signal);
           }}
-          className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
         >
           Try again
-        </button>
+        </Button>
       </div>
     );
   }

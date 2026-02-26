@@ -1,14 +1,20 @@
 import { api } from "@/lib/api-client";
+import { CitySearchResponseSchema, NearestCityResponseSchema } from "@/lib/api-schemas";
 import type { CitySearchResponse, NearestCityResponse } from "@/types/api";
 
-export function searchCities(params: {
+export async function searchCities(params: {
   q: string;
   locale?: string;
   limit?: number;
 }): Promise<CitySearchResponse> {
-  return api.get<CitySearchResponse>("/api/cities/search", params);
+  const data = await api.get<CitySearchResponse>("/api/cities/search", params);
+  return CitySearchResponseSchema.parse(data);
 }
 
-export function getNearestCity(params: { lat: number; lon: number }): Promise<NearestCityResponse> {
-  return api.get<NearestCityResponse>("/api/cities/nearest", params);
+export async function getNearestCity(params: {
+  lat: number;
+  lon: number;
+}): Promise<NearestCityResponse> {
+  const data = await api.get<NearestCityResponse>("/api/cities/nearest", params);
+  return NearestCityResponseSchema.parse(data);
 }

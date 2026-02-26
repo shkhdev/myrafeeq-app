@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useTranslations } from "use-intl";
 import { SunriseIcon } from "@/components/icons/prayer";
 import { BackArrow } from "@/components/ui/BackArrow";
+import { Button } from "@/components/ui/Button";
 import { CheckIcon } from "@/components/ui/CheckIcon";
 import { LocationPinIcon } from "@/components/ui/LocationPinIcon";
 import { LockIcon } from "@/components/ui/LockIcon";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { SpinnerIcon } from "@/components/ui/SpinnerIcon";
+import { TopBar } from "@/components/ui/TopBar";
 import { usePrayerTimesByLocation } from "@/hooks/api/usePrayerTimes";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getSDK } from "@/hooks/useTelegramSDK";
@@ -131,18 +134,11 @@ interface LocationSearchViewProps {
 function LocationSearchView({ onBack, onSelect }: LocationSearchViewProps) {
   const t = useTranslations("onboarding.location");
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
-      <div
-        className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
-      >
-        <BackArrow onClick={onBack} />
-        <StepIndicator current={2} total={4} />
-        <div className="w-11" />
-      </div>
+    <ScreenLayout>
+      <TopBar
+        left={<BackArrow onClick={onBack} />}
+        center={<StepIndicator current={2} total={4} />}
+      />
       <div className="px-6 pt-2">
         <h2 className="animate-fade-in-up text-xl font-bold text-on-surface">{t("title")}</h2>
         <p className="animate-fade-in-up-1 mt-2 text-sm text-on-surface-muted">
@@ -152,7 +148,7 @@ function LocationSearchView({ onBack, onSelect }: LocationSearchViewProps) {
           <CitySearch onSelect={onSelect} />
         </div>
       </div>
-    </div>
+    </ScreenLayout>
   );
 }
 
@@ -185,19 +181,11 @@ function LocationSuccessView({
   const prayerTimes = prayerTimesQuery.data?.times ?? null;
 
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
-      {/* Top bar */}
-      <div
-        className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
-      >
-        <BackArrow onClick={onBack} />
-        <StepIndicator current={2} total={4} />
-        <div className="w-11" />
-      </div>
+    <ScreenLayout>
+      <TopBar
+        left={<BackArrow onClick={onBack} />}
+        center={<StepIndicator current={2} total={4} />}
+      />
 
       <div className="flex flex-1 flex-col px-6 pt-4">
         {/* Success header */}
@@ -259,16 +247,12 @@ function LocationSuccessView({
           className="mt-auto pt-6"
           style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
         >
-          <button
-            type="button"
-            onClick={onContinue}
-            className="animate-fade-in-up-2 w-full rounded-2xl bg-primary py-4 text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-          >
+          <Button onClick={onContinue} className="animate-fade-in-up-2 w-full">
             {t("continue")}
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </ScreenLayout>
   );
 }
 
@@ -287,19 +271,11 @@ function LocationInitialView({
 }: LocationInitialViewProps) {
   const t = useTranslations("onboarding.location");
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ minHeight: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
-      {/* Top bar: back + step indicator */}
-      <div
-        className="flex items-center justify-between px-3"
-        style={{ paddingTop: "calc(var(--safe-top, 0px) + 0.5rem)" }}
-      >
-        <BackArrow onClick={onBack} />
-        <StepIndicator current={2} total={4} />
-        <div className="w-11" />
-      </div>
+    <ScreenLayout>
+      <TopBar
+        left={<BackArrow onClick={onBack} />}
+        center={<StepIndicator current={2} total={4} />}
+      />
 
       {/* Center content */}
       <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
@@ -327,12 +303,7 @@ function LocationInitialView({
         className="animate-fade-in-up-3 flex flex-col gap-3 px-6 pt-4"
         style={{ paddingBottom: "calc(var(--safe-bottom, 0px) + 2rem)" }}
       >
-        <button
-          type="button"
-          onClick={onRequestLocation}
-          disabled={state === "requesting"}
-          className="flex h-14 items-center justify-center rounded-2xl bg-primary text-base font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-60"
-        >
+        <Button onClick={onRequestLocation} disabled={state === "requesting"} className="w-full">
           {state === "requesting" ? (
             <span className="inline-flex items-center gap-2">
               <SpinnerIcon />
@@ -341,15 +312,11 @@ function LocationInitialView({
           ) : (
             t("enableLocation")
           )}
-        </button>
-        <button
-          type="button"
-          onClick={onSearchManually}
-          className="flex h-14 items-center justify-center rounded-2xl border border-on-surface/20 text-base font-medium text-on-surface/80 transition-colors hover:bg-on-surface/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30"
-        >
+        </Button>
+        <Button variant="secondary" onClick={onSearchManually} className="w-full">
           {t("searchCity")}
-        </button>
+        </Button>
       </div>
-    </div>
+    </ScreenLayout>
   );
 }

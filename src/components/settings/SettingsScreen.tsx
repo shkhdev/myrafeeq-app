@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useTranslations } from "use-intl";
 
 import { BackArrow } from "@/components/ui/BackArrow";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useTelegramBackButton } from "@/hooks/useTelegramBackButton";
 import { useAppStore } from "@/stores/app-store";
 
@@ -19,10 +20,7 @@ export function SettingsScreen() {
   useTelegramBackButton(handleBack);
 
   return (
-    <div
-      className="flex flex-col bg-surface"
-      style={{ height: "var(--tg-viewport-stable-height, 100dvh)" }}
-    >
+    <ScreenLayout fixedHeight>
       {/* Header */}
       <div
         className="shrink-0 flex items-center gap-2 px-3"
@@ -43,6 +41,6 @@ export function SettingsScreen() {
         <AppearanceSettings />
         <AboutSection />
       </div>
-    </div>
+    </ScreenLayout>
   );
 }

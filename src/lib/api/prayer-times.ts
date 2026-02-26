@@ -1,19 +1,23 @@
+import { z } from "zod/v4";
 import { api } from "@/lib/api-client";
+import { PrayerTimesResponseSchema } from "@/lib/api-schemas";
 import type { PrayerTimesResponse } from "@/types/api";
 
-export function getPrayerTimes(params?: {
+export async function getPrayerTimes(params?: {
   date?: string;
   days?: number;
 }): Promise<PrayerTimesResponse[]> {
-  return api.get<PrayerTimesResponse[]>("/api/prayer-times", params);
+  const data = await api.get<PrayerTimesResponse[]>("/api/prayer-times", params);
+  return z.array(PrayerTimesResponseSchema).parse(data);
 }
 
-export function getPrayerTimesByLocation(params: {
+export async function getPrayerTimesByLocation(params: {
   lat: number;
   lon: number;
   date?: string;
   method?: string;
   timezone?: string;
 }): Promise<PrayerTimesResponse> {
-  return api.get<PrayerTimesResponse>("/api/prayer-times/by-location", params);
+  const data = await api.get<PrayerTimesResponse>("/api/prayer-times/by-location", params);
+  return PrayerTimesResponseSchema.parse(data);
 }
