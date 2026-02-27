@@ -14,8 +14,12 @@ import type {
   UserPreferencesResponse,
 } from "@/types/api";
 
-export async function getPreferences(): Promise<UserPreferencesResponse> {
-  const data = await api.get<UserPreferencesResponse>("/api/v1/user/preferences");
+export async function getPreferences(signal?: AbortSignal): Promise<UserPreferencesResponse> {
+  const data = await api.get<UserPreferencesResponse>(
+    "/api/v1/user/preferences",
+    undefined,
+    signal,
+  );
   return UserPreferencesResponseSchema.parse(data) as UserPreferencesResponse;
 }
 
@@ -41,19 +45,24 @@ function toApiRequest(data: UpdatePreferencesRequest): Record<string, unknown> {
 
 export async function updatePreferences(
   data: UpdatePreferencesRequest,
+  signal?: AbortSignal,
 ): Promise<UserPreferencesResponse> {
   const result = await api.patch<UserPreferencesResponse>(
     "/api/v1/user/preferences",
     toApiRequest(data),
+    signal,
   );
   return UserPreferencesResponseSchema.parse(result) as UserPreferencesResponse;
 }
 
-export async function completeOnboarding(data: OnboardingRequest): Promise<OnboardingResponse> {
+export async function completeOnboarding(
+  data: OnboardingRequest,
+  signal?: AbortSignal,
+): Promise<OnboardingResponse> {
   const apiData = {
     ...data,
     prayerNotifications: prayerNotificationsToApi(data.prayerNotifications),
   };
-  const result = await api.post<OnboardingResponse>("/api/v1/user/onboarding", apiData);
+  const result = await api.post<OnboardingResponse>("/api/v1/user/onboarding", apiData, signal);
   return OnboardingResponseSchema.parse(result) as OnboardingResponse;
 }

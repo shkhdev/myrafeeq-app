@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/react";
 import { useEffect, useState } from "react";
 
 import { resolveLocale } from "@/i18n/locale";
+import { enrichTelegramContext } from "@/lib/sentry";
 import { useLocaleStore } from "@/stores/locale-store";
 
 type TelegramSDK = typeof import("@telegram-apps/sdk-react");
@@ -193,7 +194,10 @@ export function TelegramProvider({ children }: { children: React.ReactNode }) {
       .catch((error: unknown) => {
         Sentry.captureException(error, { tags: { context: "telegram.init" } });
       })
-      .finally(() => setReady(true));
+      .finally(() => {
+        setReady(true);
+        enrichTelegramContext();
+      });
   }, []);
 
   if (!ready) return null;

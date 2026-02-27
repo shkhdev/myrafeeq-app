@@ -6,7 +6,7 @@ export function useValidateAuth() {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   return useMutation({
-    mutationFn: validateTelegramAuth,
+    mutationFn: (initData: string) => validateTelegramAuth(initData),
     onSuccess: (data) => {
       setAuth(data.token, data.user.telegramId, data.user.onboardingCompleted);
     },

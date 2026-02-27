@@ -4,6 +4,6 @@ import { getDashboard } from "@/lib/api/dashboard";
 export function useDashboard() {
   return useQuery({
     queryKey: ["dashboard"],
-    queryFn: getDashboard,
+    queryFn: ({ signal }) => getDashboard(signal),
   });
 }

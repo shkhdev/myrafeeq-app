@@ -1,4 +1,4 @@
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Toaster } from "sonner";
 import { usePreferencesSync } from "@/hooks/usePreferencesSync";
 import { AuthProvider } from "./AuthProvider";
 import { IntlProvider } from "./IntlProvider";
@@ -19,7 +19,17 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <AuthProvider>
             <SyncBridge>
               <IntlProvider>
-                <ErrorBoundary>{children}</ErrorBoundary>
+                {children}
+                <Toaster
+                  position="top-center"
+                  toastOptions={{
+                    style: {
+                      background: "var(--sem-surface-elevated)",
+                      color: "var(--sem-on-surface)",
+                      border: "1px solid var(--sem-border)",
+                    },
+                  }}
+                />
               </IntlProvider>
             </SyncBridge>
           </AuthProvider>

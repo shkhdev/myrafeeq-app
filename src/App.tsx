@@ -1,13 +1,13 @@
-import * as Sentry from "@sentry/react";
 import { AppShell } from "@/components/AppShell";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppProviders } from "@/providers/AppProviders";
 
 export function App() {
   return (
-    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-      <AppProviders>
+    <AppProviders>
+      <ErrorBoundary name="app-root">
         <AppShell />
-      </AppProviders>
-    </Sentry.ErrorBoundary>
+      </ErrorBoundary>
+    </AppProviders>
   );
 }

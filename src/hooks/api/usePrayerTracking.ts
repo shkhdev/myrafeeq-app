@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getPrayerStats, getPrayerTracking, togglePrayer } from "@/lib/api/prayer-tracking";
-import type { PrayerTrackingResponse } from "@/types/api";
+import type { PrayerTrackingResponse, TogglePrayerRequest } from "@/types/api";
 
 export function usePrayerTracking(date?: string) {
   return useQuery({
     queryKey: ["prayer-tracking", date],
-    queryFn: () => getPrayerTracking(date ? { date } : undefined),
+    queryFn: ({ signal }) => getPrayerTracking(date ? { date } : undefined, signal),
   });
 }
 
@@ -15,7 +15,7 @@ export function useTogglePrayer() {
   const haptic = useHaptic();
 
   return useMutation({
-    mutationFn: togglePrayer,
+    mutationFn: (data: TogglePrayerRequest) => togglePrayer(data),
     onMutate: async (data) => {
       const queryKey = ["prayer-tracking", data.date];
       await queryClient.cancelQueries({ queryKey });
@@ -51,6 +51,6 @@ export function useTogglePrayer() {
 export function usePrayerStats(period: string) {
   return useQuery({
     queryKey: ["prayer-stats", period],
-    queryFn: () => getPrayerStats(period),
+    queryFn: ({ signal }) => getPrayerStats(period, signal),
   });
 }

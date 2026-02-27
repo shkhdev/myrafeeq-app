@@ -1,7 +1,24 @@
 {
   "errors": {
     "somethingWentWrong": "Что-то пошло не так",
-    "tryAgain": "Попробовать снова"
+    "tryAgain": "Попробовать снова",
+    "networkError": "Проблема с подключением. Проверьте сеть.",
+    "networkRetrying": "Проблема с подключением. Повторная попытка...",
+    "sessionExpired": "Сессия истекла",
+    "sessionExpiredDescription": "Ваша сессия истекла. Пожалуйста, откройте приложение заново.",
+    "reopenApp": "Открыть заново",
+    "serverError": "Ошибка сервера",
+    "serverErrorDescription": "Произошла ошибка на нашей стороне. Попробуйте позже.",
+    "validationError": "Неверный запрос",
+    "businessError": "Запрос не удалось выполнить",
+    "authFailed": "Ошибка аутентификации",
+    "authRejected": "Аутентификация Telegram была отклонена сервером. Откройте приложение из Telegram.",
+    "authGeneric": "Ошибка аутентификации. Попробуйте снова.",
+    "connectionFailed": "Ошибка подключения",
+    "connectionFailedDescription": "Не удалось подключиться к серверу. Проверьте соединение и попробуйте снова.",
+    "unexpectedDescription": "Произошла непредвиденная ошибка. Попробуйте снова.",
+    "openInTelegram": "Откройте приложение в Telegram",
+    "openInTelegramDescription": "MyRafeeq — это мини-приложение Telegram, которое нужно запускать из Telegram."
   },
   "common": {
     "goBack": "Назад",

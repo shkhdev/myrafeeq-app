@@ -1,10 +1,10 @@
 import { useTranslations } from "use-intl";
 
-import { Button } from "@/components/ui/Button";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
 import { usePreferencesStore } from "@/stores/preferences-store";
 
+import { ErrorState } from "../ui/ErrorState";
 import { HomeHeader } from "./HomeHeader";
 import { PrayerHeroCard } from "./PrayerHeroCard";
 import { PrayerTimesList } from "./PrayerTimesList";
@@ -23,12 +23,7 @@ export function HomeScreen() {
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       ) : isError ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-          <p className="text-sm text-on-surface-muted">{t("loadError")}</p>
-          <Button size="md" onClick={() => refetch()}>
-            {t("retry")}
-          </Button>
-        </div>
+        <ErrorState message={t("loadError")} retryLabel={t("retry")} onRetry={() => refetch()} />
       ) : prayerTimes ? (
         <>
           <PrayerHeroCard prayerTimes={prayerTimes} />

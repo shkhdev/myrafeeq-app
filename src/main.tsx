@@ -1,18 +1,7 @@
-import * as Sentry from "@sentry/react";
+import { initSentry, installGlobalHandlers } from "./lib/sentry";
 
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  environment: import.meta.env.DEV ? "development" : "production",
-  sendDefaultPii: true,
-  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
-  tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.2,
-  tracePropagationTargets: ["localhost"],
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-  enableLogs: true,
-});
-
-window.__SENTRY_LOADED__ = true;
+initSentry();
+installGlobalHandlers();
 
 import "@telegram-apps/telegram-ui/dist/styles.css";
 import "./globals.css";

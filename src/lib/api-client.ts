@@ -1,8 +1,10 @@
-import * as Sentry from "@sentry/react";
 import { API_URL } from "@/env";
 import { useAuthStore } from "@/stores/auth-store";
 import type { ApiErrorResponse } from "@/types/api";
+import { classifyFetchError, classifyHttpError } from "./errors";
+import { reportError, reportRetrySuccess } from "./sentry";
 
+/** @deprecated Use AppError subclasses instead. Kept for backward compatibility. */
 export class ApiError extends Error {
   constructor(
     public code: string,
@@ -14,10 +16,6 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * Re-validate Telegram initData and refresh the auth token.
- * Returns true if re-auth succeeded, false otherwise.
- */
 async function tryReauth(): Promise<boolean> {
   try {
     const sdk = await import("@telegram-apps/sdk-react");
@@ -52,93 +50,178 @@ async function tryReauth(): Promise<boolean> {
       .setAuth(data.token, data.user.telegramId, data.user.onboardingCompleted);
     return true;
   } catch (error) {
-    Sentry.captureException(error, { tags: { context: "api.reauth" } });
+    const appError = classifyFetchError(error, { path: "/api/v1/auth/token" });
+    reportError(appError);
     return false;
   }
 }
 
-/** Track whether a re-auth attempt is already in progress to avoid duplicates. */
 let reauthPromise: Promise<boolean> | null = null;
 
 const REQUEST_TIMEOUT_MS = 15_000;
+const MAX_RETRIES = 3;
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = useAuthStore.getState().token;
-  const headers: Record<string, string> = {
-    ...(import.meta.env.DEV && API_URL.includes("ngrok")
-      ? { "ngrok-skip-browser-warning": "1" }
-      : {}),
-    ...((options.headers as Record<string, string>) ?? {}),
+interface RetryConfig {
+  baseDelayMs: number;
+  maxDelayMs: number;
+}
+
+const NETWORK_RETRY: RetryConfig = { baseDelayMs: 1000, maxDelayMs: 15_000 };
+const RATE_LIMIT_RETRY: RetryConfig = { baseDelayMs: 2000, maxDelayMs: 30_000 };
+
+function getRetryDelay(attempt: number, config: RetryConfig): number {
+  return Math.min(config.baseDelayMs * 2 ** attempt, config.maxDelayMs);
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status === 502 || status === 503;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+interface RequestOptions extends Omit<RequestInit, "signal"> {
+  signal?: AbortSignal | undefined;
+}
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const { signal: callerSignal, ...restOptions } = options;
+  const requestContext = {
+    method: restOptions.method ?? "GET",
+    path,
   };
 
-  if (options.body) {
-    headers["Content-Type"] ??= "application/json";
-  }
+  let lastError: unknown;
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const token = useAuthStore.getState().token;
+    const headers: Record<string, string> = {
+      ...(import.meta.env.DEV && API_URL.includes("ngrok")
+        ? { "ngrok-skip-browser-warning": "1" }
+        : {}),
+      ...((restOptions.headers as Record<string, string>) ?? {}),
+    };
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    if (restOptions.body) {
+      headers["Content-Type"] ??= "application/json";
+    }
 
-  let response: Response;
-  try {
-    response = await fetch(`${API_URL}${path}`, {
-      ...options,
-      headers,
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timeoutId);
-  }
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
-  // Handle 401 — attempt transparent re-auth, then retry the original request once
-  if (response.status === 401 && token) {
-    if (!reauthPromise) {
-      reauthPromise = tryReauth().finally(() => {
-        reauthPromise = null;
+    const timeoutController = new AbortController();
+    const timeoutId = setTimeout(() => timeoutController.abort(), REQUEST_TIMEOUT_MS);
+
+    // Compose caller signal with internal timeout
+    const signals: AbortSignal[] = [timeoutController.signal];
+    if (callerSignal) signals.push(callerSignal);
+    const composedSignal = AbortSignal.any(signals);
+
+    let response: Response;
+    try {
+      response = await fetch(`${API_URL}${path}`, {
+        ...restOptions,
+        headers,
+        signal: composedSignal,
       });
-    }
-    const refreshed = await reauthPromise;
-    if (refreshed) {
-      const newToken = useAuthStore.getState().token;
-      headers.Authorization = `Bearer ${newToken}`;
-      const retryResponse = await fetch(`${API_URL}${path}`, { ...options, headers });
-      if (!retryResponse.ok) {
-        const body = (await retryResponse.json().catch(() => null)) as ApiErrorResponse | null;
-        throw new ApiError(
-          body?.error?.code ?? "UNKNOWN_ERROR",
-          body?.error?.message ?? `Request failed with status ${retryResponse.status}`,
-          retryResponse.status,
-        );
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      // If caller aborted (e.g. component unmount), rethrow silently — no retry
+      if (callerSignal?.aborted) {
+        throw error;
       }
-      if (retryResponse.status === 204) return undefined as T;
-      return retryResponse.json() as Promise<T>;
+
+      const appError = classifyFetchError(error, requestContext);
+      lastError = appError;
+
+      if (appError.retryable && attempt < MAX_RETRIES) {
+        await sleep(getRetryDelay(attempt, NETWORK_RETRY));
+        continue;
+      }
+      reportError(appError);
+      throw appError;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    // Re-auth failed — clear auth so the app can show the appropriate state
-    useAuthStore.getState().clearAuth();
+
+    // Handle 401 — attempt transparent re-auth, then retry the original request once
+    if (response.status === 401 && token) {
+      if (!reauthPromise) {
+        reauthPromise = tryReauth().finally(() => {
+          reauthPromise = null;
+        });
+      }
+      const refreshed = await reauthPromise;
+      if (refreshed) {
+        const newToken = useAuthStore.getState().token;
+        headers.Authorization = `Bearer ${newToken}`;
+        const retryResponse = await fetch(`${API_URL}${path}`, {
+          ...restOptions,
+          headers,
+          ...(callerSignal ? { signal: callerSignal } : {}),
+        });
+        if (!retryResponse.ok) {
+          const body = (await retryResponse.json().catch(() => null)) as ApiErrorResponse | null;
+          throw classifyHttpError(
+            retryResponse.status,
+            body?.error?.code ?? "UNKNOWN_ERROR",
+            body?.error?.message ?? `Request failed with status ${retryResponse.status}`,
+            requestContext,
+          );
+        }
+        if (retryResponse.status === 204) return undefined as T;
+        return retryResponse.json() as Promise<T>;
+      }
+      // Re-auth failed
+      useAuthStore.getState().clearAuth();
+    }
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as ApiErrorResponse | null;
+      const appError = classifyHttpError(
+        response.status,
+        body?.error?.code ?? "UNKNOWN_ERROR",
+        body?.error?.message ?? `Request failed with status ${response.status}`,
+        requestContext,
+      );
+
+      lastError = appError;
+
+      if (isRetryableStatus(response.status) && attempt < MAX_RETRIES) {
+        const config = response.status === 429 ? RATE_LIMIT_RETRY : NETWORK_RETRY;
+        await sleep(getRetryDelay(attempt, config));
+        continue;
+      }
+
+      reportError(appError);
+      throw appError;
+    }
+
+    // Success — report if we retried
+    if (attempt > 0) {
+      reportRetrySuccess(attempt, { path });
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.json() as Promise<T>;
   }
 
-  if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as ApiErrorResponse | null;
-    throw new ApiError(
-      body?.error?.code ?? "UNKNOWN_ERROR",
-      body?.error?.message ?? `Request failed with status ${response.status}`,
-      response.status,
-    );
-  }
-
-  if (response.status === 204) {
-    // No current endpoint returns 204. If one is added, callers should type T accordingly.
-    return undefined as T;
-  }
-
-  return response.json() as Promise<T>;
+  // Exhausted retries
+  throw lastError;
 }
 
 export const api = {
-  get: <T>(path: string, params?: Record<string, string | number | undefined>) => {
+  get: <T>(
+    path: string,
+    params?: Record<string, string | number | undefined>,
+    signal?: AbortSignal,
+  ) => {
     const searchParams = new URLSearchParams();
     if (params) {
       for (const [key, value] of Object.entries(params)) {
@@ -148,21 +231,24 @@ export const api = {
       }
     }
     const query = searchParams.toString();
-    return request<T>(query ? `${path}?${query}` : path);
+    return request<T>(query ? `${path}?${query}` : path, { signal });
   },
-  post: <T>(path: string, body?: unknown) =>
+  post: <T>(path: string, body?: unknown, signal?: AbortSignal) =>
     request<T>(path, {
       method: "POST",
       body: body ? JSON.stringify(body) : null,
+      signal,
     }),
-  put: <T>(path: string, body?: unknown) =>
+  put: <T>(path: string, body?: unknown, signal?: AbortSignal) =>
     request<T>(path, {
       method: "PUT",
       body: body ? JSON.stringify(body) : null,
+      signal,
     }),
-  patch: <T>(path: string, body?: unknown) =>
+  patch: <T>(path: string, body?: unknown, signal?: AbortSignal) =>
     request<T>(path, {
       method: "PATCH",
       body: body ? JSON.stringify(body) : null,
+      signal,
     }),
 };

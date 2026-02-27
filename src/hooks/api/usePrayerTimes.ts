@@ -4,7 +4,7 @@ import { getPrayerTimes, getPrayerTimesByLocation } from "@/lib/api/prayer-times
 export function usePrayerTimes(date?: string) {
   return useQuery({
     queryKey: ["prayer-times", date],
-    queryFn: () => getPrayerTimes(date ? { date } : undefined),
+    queryFn: ({ signal }) => getPrayerTimes(date ? { date } : undefined, signal),
   });
 }
 
@@ -16,14 +16,17 @@ export function usePrayerTimesByLocation(
   const { timezone, method, madhab, enabled = true } = options ?? {};
   return useQuery({
     queryKey: ["prayer-times-location", lat, lon, timezone, method, madhab],
-    queryFn: () =>
-      getPrayerTimesByLocation({
-        lat,
-        lon,
-        ...(timezone != null ? { timezone } : {}),
-        ...(method != null ? { method } : {}),
-        ...(madhab != null ? { madhab } : {}),
-      }),
+    queryFn: ({ signal }) =>
+      getPrayerTimesByLocation(
+        {
+          lat,
+          lon,
+          ...(timezone != null ? { timezone } : {}),
+          ...(method != null ? { method } : {}),
+          ...(madhab != null ? { madhab } : {}),
+        },
+        signal,
+      ),
     enabled,
   });
 }

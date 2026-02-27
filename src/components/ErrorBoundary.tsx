@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import { useTranslations } from "use-intl";
@@ -5,13 +6,16 @@ import { Button } from "./ui/Button";
 
 interface Props {
   children: ReactNode;
+  name?: string;
+  fallback?: (props: { error: Error; reset: () => void }) => ReactNode;
 }
 
 interface State {
   hasError: boolean;
+  error: Error | null;
 }
 
-function ErrorFallback({ onReset }: { onReset: () => void }) {
+function DefaultFallback({ onReset }: { onReset: () => void }) {
   const t = useTranslations("errors");
 
   return (
@@ -27,21 +31,27 @@ function ErrorFallback({ onReset }: { onReset: () => void }) {
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // biome-ignore lint/suspicious/noConsole: error boundary logging is intentional
-    console.error("[ErrorBoundary]", error, errorInfo);
+    Sentry.captureException(error, {
+      tags: { boundary: this.props.name ?? "unknown" },
+      extra: { componentStack: errorInfo.componentStack },
+    });
   }
 
   render() {
-    if (this.state.hasError) {
-      return <ErrorFallback onReset={() => this.setState({ hasError: false })} />;
+    if (this.state.hasError && this.state.error) {
+      const reset = () => this.setState({ hasError: false, error: null });
+      if (this.props.fallback) {
+        return this.props.fallback({ error: this.state.error, reset });
+      }
+      return <DefaultFallback onReset={reset} />;
     }
 
     return this.props.children;

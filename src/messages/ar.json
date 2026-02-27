@@ -1,7 +1,24 @@
 {
   "errors": {
     "somethingWentWrong": "حدث خطأ ما",
-    "tryAgain": "حاول مرة أخرى"
+    "tryAgain": "حاول مرة أخرى",
+    "networkError": "مشكلة في الاتصال. يرجى التحقق من الشبكة.",
+    "networkRetrying": "مشكلة في الاتصال. جارٍ إعادة المحاولة...",
+    "sessionExpired": "انتهت الجلسة",
+    "sessionExpiredDescription": "انتهت صلاحية جلستك. يرجى إعادة فتح التطبيق.",
+    "reopenApp": "إعادة فتح التطبيق",
+    "serverError": "خطأ في الخادم",
+    "serverErrorDescription": "حدث خطأ من جانبنا. يرجى المحاولة لاحقاً.",
+    "validationError": "طلب غير صالح",
+    "businessError": "تعذر إكمال الطلب",
+    "authFailed": "فشل المصادقة",
+    "authRejected": "رفض الخادم مصادقة تيليجرام. يرجى إعادة فتح التطبيق من تيليجرام.",
+    "authGeneric": "فشل المصادقة. يرجى المحاولة مرة أخرى.",
+    "connectionFailed": "فشل الاتصال",
+    "connectionFailedDescription": "تعذر الاتصال بالخادم. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+    "unexpectedDescription": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+    "openInTelegram": "يرجى فتح هذا التطبيق في تيليجرام",
+    "openInTelegramDescription": "MyRafeeq هو تطبيق تيليجرام مصغر ويجب تشغيله من داخل تيليجرام."
   },
   "common": {
     "goBack": "رجوع",

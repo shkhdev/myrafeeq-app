@@ -1,7 +1,24 @@
 {
   "errors": {
     "somethingWentWrong": "Something went wrong",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "networkError": "Connection issue. Please check your network.",
+    "networkRetrying": "Connection issue. Retrying...",
+    "sessionExpired": "Session expired",
+    "sessionExpiredDescription": "Your session has expired. Please reopen the app.",
+    "reopenApp": "Reopen App",
+    "serverError": "Server error",
+    "serverErrorDescription": "Something went wrong on our end. Please try again later.",
+    "validationError": "Invalid request",
+    "businessError": "Request could not be completed",
+    "authFailed": "Authentication failed",
+    "authRejected": "Telegram authentication was rejected by the server. Please reopen the app from Telegram.",
+    "authGeneric": "Authentication failed. Please try again.",
+    "connectionFailed": "Connection failed",
+    "connectionFailedDescription": "Unable to connect to the server. Please check your connection and try again.",
+    "unexpectedDescription": "An unexpected error occurred. Please try again.",
+    "openInTelegram": "Please open this app in Telegram",
+    "openInTelegramDescription": "MyRafeeq is a Telegram Mini App and needs to be launched from within Telegram."
   },
   "common": {
     "goBack": "Go back",

@@ -1,20 +1,13 @@
-import * as Sentry from "@sentry/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { updatePreferences } from "@/lib/api/preferences";
+import { isAppError } from "@/lib/errors";
+import { reportError } from "@/lib/sentry";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePreferencesStore } from "@/stores/preferences-store";
 import { useThemeStore } from "@/stores/theme-store";
 import type { UpdatePreferencesRequest } from "@/types/api";
 
-/**
- * Module-level timestamp used to suppress sync-back after hydration.
- * Any store change within the grace window is silently ignored.
- *
- * A boolean flag was insufficient because hydrateFromBackend() updates two
- * stores (preferences + theme), triggering two subscription callbacks — the
- * first would consume a boolean flag, and the second would sync defaults.
- */
 let skipUntil = 0;
 
 /** Call before hydrating stores from backend to prevent a redundant sync-back. */
@@ -61,12 +54,9 @@ export function usePreferencesSync() {
           queryClient.invalidateQueries({ queryKey: ["prayer-times"] });
         })
         .catch((error: unknown) => {
-          Sentry.captureException(error, { tags: { context: "preferences.sync" } });
-          // biome-ignore lint/suspicious/noConsole: sync error logging
-          console.warn(
-            "[PreferencesSync] Failed to sync:",
-            error instanceof Error ? error.message : error,
-          );
+          if (isAppError(error)) {
+            reportError(error);
+          }
           if (retryCountRef.current < 3) {
             retryCountRef.current += 1;
             const delay = 1000 * 2 ** retryCountRef.current; // 2s, 4s, 8s

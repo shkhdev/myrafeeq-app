@@ -1,7 +1,24 @@
 {
   "errors": {
     "somethingWentWrong": "Xatolik yuz berdi",
-    "tryAgain": "Qayta urinish"
+    "tryAgain": "Qayta urinish",
+    "networkError": "Ulanish muammosi. Tarmoqni tekshiring.",
+    "networkRetrying": "Ulanish muammosi. Qayta urinilmoqda...",
+    "sessionExpired": "Sessiya tugadi",
+    "sessionExpiredDescription": "Sessiyangiz tugadi. Ilovani qayta oching.",
+    "reopenApp": "Qayta ochish",
+    "serverError": "Server xatosi",
+    "serverErrorDescription": "Bizning tomonda xatolik yuz berdi. Keyinroq urinib ko'ring.",
+    "validationError": "Noto'g'ri so'rov",
+    "businessError": "So'rovni bajarib bo'lmadi",
+    "authFailed": "Autentifikatsiya xatosi",
+    "authRejected": "Telegram autentifikatsiyasi server tomonidan rad etildi. Ilovani Telegramdan qayta oching.",
+    "authGeneric": "Autentifikatsiya xatosi. Qayta urinib ko'ring.",
+    "connectionFailed": "Ulanish xatosi",
+    "connectionFailedDescription": "Serverga ulanib bo'lmadi. Ulanishni tekshiring va qayta urinib ko'ring.",
+    "unexpectedDescription": "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring.",
+    "openInTelegram": "Ilovani Telegramda oching",
+    "openInTelegramDescription": "MyRafeeq Telegram mini ilovasi bo'lib, uni Telegram ichidan ishga tushirish kerak."
   },
   "common": {
     "goBack": "Orqaga",
