@@ -30,6 +30,7 @@ export interface UserPreferencesResponse {
   hijriCorrection: number;
   timeFormat: "12h" | "24h";
   theme: "light" | "dark" | "system";
+  locale: string;
   notificationsEnabled: boolean;
   reminderTiming: ReminderTiming;
   prayerNotifications: PrayerNotificationPrefs;
@@ -44,6 +45,7 @@ export interface UpdatePreferencesRequest {
   hijriCorrection?: number;
   timeFormat?: string;
   theme?: string;
+  locale?: string;
   notificationsEnabled?: boolean;
   reminderTiming?: string;
   prayerNotifications?: PrayerNotificationPrefs;
@@ -54,9 +56,11 @@ export interface OnboardingRequest {
   cityId: string;
   latitude: number;
   longitude: number;
+  madhab: string;
   notificationsEnabled: boolean;
   prayerNotifications: PrayerNotificationPrefs;
   reminderTiming: string;
+  languageCode: string;
 }
 
 export interface OnboardingResponse {

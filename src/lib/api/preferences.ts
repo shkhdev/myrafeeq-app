@@ -34,6 +34,7 @@ function toApiRequest(data: UpdatePreferencesRequest): Record<string, unknown> {
   if (data.hijriCorrection !== undefined) req.hijriCorrection = data.hijriCorrection;
   if (data.timeFormat !== undefined) req.timeFormat = data.timeFormat;
   if (data.theme !== undefined) req.theme = themeToApi(data.theme);
+  if (data.locale !== undefined) req.languageCode = data.locale;
   if (data.notificationsEnabled !== undefined) req.notificationsEnabled = data.notificationsEnabled;
   if (data.reminderTiming !== undefined) req.reminderTiming = data.reminderTiming;
   if (data.prayerNotifications !== undefined)

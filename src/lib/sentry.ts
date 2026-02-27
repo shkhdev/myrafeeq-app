@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/react";
+import { feedbackIntegration, getFeedback } from "@sentry/browser";
 import { type AppError, isAppError } from "./errors";
 
 export function initSentry() {
@@ -6,7 +7,18 @@ export function initSentry() {
     dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.DEV ? "development" : "production",
     sendDefaultPii: true,
-    integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+      feedbackIntegration({
+        autoInject: false,
+        colorScheme: "system",
+        showName: false,
+        showEmail: false,
+        enableScreenshot: true,
+        showBranding: false,
+      }),
+    ],
     tracesSampleRate: import.meta.env.DEV ? 1.0 : 0.2,
     tracePropagationTargets: ["localhost"],
     replaysSessionSampleRate: 0.1,
@@ -112,6 +124,19 @@ export function reportRetrySuccess(attempt: number, context?: { path?: string } 
     level: "info",
     ...(context ? { data: context } : {}),
   });
+}
+
+export async function openFeedbackForm(): Promise<boolean> {
+  try {
+    const feedback = getFeedback();
+    if (!feedback) return false;
+    const form = await feedback.createForm();
+    form.appendToDom();
+    form.open();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function installGlobalHandlers() {

@@ -43,11 +43,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!initData) {
         if (import.meta.env.DEV) {
-          setStatus("ready");
+          // SDK signals may not expose mock data — build dev initData directly
+          const mockUser = { id: 12345, first_name: "Test", language_code: "en" };
+          initData = new URLSearchParams({
+            user: JSON.stringify(mockUser),
+            auth_date: String(Math.floor(Date.now() / 1000)),
+            hash: "dev",
+          }).toString();
         } else {
           setStatus("no-initdata");
+          return;
         }
-        return;
       }
 
       const response = await validateTelegramAuth(initData);

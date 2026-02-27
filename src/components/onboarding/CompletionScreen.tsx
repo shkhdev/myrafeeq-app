@@ -10,6 +10,7 @@ import { useHaptic } from "@/hooks/useHaptic";
 import { pauseSync } from "@/hooks/usePreferencesSync";
 import { hydrateFromBackend } from "@/lib/hydrate-preferences";
 import { useAuthStore } from "@/stores/auth-store";
+import { useLocaleStore } from "@/stores/locale-store";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 
 export function CompletionScreen() {
@@ -32,20 +33,27 @@ export function CompletionScreen() {
     }
 
     setFailed(false);
+    const userLocale = useLocaleStore.getState().locale;
+
     completeOnboarding.mutate(
       {
         cityId: data.city.id,
         latitude: data.latitude ?? data.city.latitude,
         longitude: data.longitude ?? data.city.longitude,
+        madhab: data.madhab.toUpperCase(),
         notificationsEnabled: data.notificationsEnabled,
         prayerNotifications: data.prayerNotifications,
         reminderTiming: data.reminderTiming,
+        languageCode: userLocale,
       },
       {
         onSuccess: (response) => {
           // Hydrate stores from backend response — pause sync to prevent echoing back
           pauseSync();
           hydrateFromBackend(response.preferences);
+
+          // Restore locale — backend may not return it if onboarding didn't persist it
+          useLocaleStore.getState().setLocale(userLocale);
 
           useAuthStore.getState().setOnboardingCompleted(true);
 

@@ -94,7 +94,9 @@
     "resetAdjustments": "Сбросить всё на 0",
     "about": "О приложении",
     "version": "Версия {version}",
-    "appDescription": "Ваш исламский помощник"
+    "appDescription": "Ваш исламский помощник",
+    "feedback": "Отправить отзыв",
+    "feedbackUnavailable": "Обратная связь временно недоступна. Попробуйте позже."
   },
   "onboarding": {
     "welcome": {

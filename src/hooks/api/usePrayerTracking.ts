@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getPrayerStats, getPrayerTracking, togglePrayer } from "@/lib/api/prayer-tracking";
-import type { PrayerTrackingResponse, TogglePrayerRequest } from "@/types/api";
+import type { DashboardResponse, TogglePrayerRequest } from "@/types/api";
 
 export function usePrayerTracking(date?: string) {
   return useQuery({
@@ -17,17 +17,18 @@ export function useTogglePrayer() {
   return useMutation({
     mutationFn: (data: TogglePrayerRequest) => togglePrayer(data),
     onMutate: async (data) => {
-      const queryKey = ["prayer-tracking", data.date];
+      const queryKey = ["dashboard"];
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<PrayerTrackingResponse>(queryKey);
+      const previous = queryClient.getQueryData<DashboardResponse>(queryKey);
 
-      queryClient.setQueryData<PrayerTrackingResponse>(queryKey, (old) => {
-        const existing = old ?? { tracking: {} };
+      queryClient.setQueryData<DashboardResponse>(queryKey, (old) => {
+        if (!old) return old;
         return {
+          ...old,
           tracking: {
-            ...existing.tracking,
+            ...old.tracking,
             [data.date]: {
-              ...(existing.tracking[data.date] ?? {}),
+              ...(old.tracking[data.date] ?? {}),
               [data.prayer]: data.prayed,
             },
           },
@@ -36,14 +37,14 @@ export function useTogglePrayer() {
 
       return { previous };
     },
-    onError: (_err, data, context) => {
+    onError: (_err, _data, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["prayer-tracking", data.date], context.previous);
+        queryClient.setQueryData(["dashboard"], context.previous);
       }
       haptic.notification("error");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["prayer-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }

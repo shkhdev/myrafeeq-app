@@ -36,8 +36,7 @@ function buildMockInitData(): string {
   return new URLSearchParams({
     user: JSON.stringify(MOCK_USER),
     auth_date: String(Math.floor(Date.now() / 1000)),
-    hash: "mock_hash_for_development",
-    signature: "mock_signature_for_development",
+    hash: "dev",
   }).toString();
 }
 

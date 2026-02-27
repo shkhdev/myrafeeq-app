@@ -94,7 +94,9 @@
     "resetAdjustments": "Hammasini 0 ga qaytarish",
     "about": "Ilova haqida",
     "version": "Versiya {version}",
-    "appDescription": "Islomiy hamrohing"
+    "appDescription": "Islomiy hamrohing",
+    "feedback": "Fikr bildirish",
+    "feedbackUnavailable": "Fikr bildirish hozircha ishlamaydi. Keyinroq urinib ko'ring."
   },
   "onboarding": {
     "welcome": {

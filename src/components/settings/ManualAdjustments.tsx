@@ -30,36 +30,38 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
   const hasAnyAdjustment = ADJUSTABLE_PRAYERS.some((p) => adjustments[p] !== 0);
 
   return (
-    <div className="animate-fade-in-up">
+    <div className="mt-6 animate-fade-in-up">
       {/* Header */}
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-2 flex items-center gap-2 ps-1">
         <BackArrow onClick={onBack} />
-        <h3 className="text-base font-bold text-on-surface">{t("manualAdjustments")}</h3>
+        <h3 className="text-sm font-semibold text-on-surface-muted">{t("manualAdjustments")}</h3>
       </div>
-
-      <p className="mb-4 ps-1 text-xs leading-relaxed text-on-surface-muted">
-        {t("adjustmentsDescription")}
-      </p>
 
       {/* Per-prayer stepper rows */}
       <div className="overflow-hidden rounded-2xl bg-on-surface/5 ring-1 ring-on-surface/10">
+        {/* Description inside the card */}
+        <p className="px-4 pb-1 pt-3 text-[11px] leading-relaxed text-on-surface-muted">
+          {t("adjustmentsDescription")}
+        </p>
+
         {ADJUSTABLE_PRAYERS.map((prayer, i) => {
           const Icon = getPrayerIcon(prayer);
           const value = adjustments[prayer] ?? 0;
+          const isModified = value !== 0;
           return (
             <div
               key={prayer}
-              className={`flex items-center justify-between px-4 py-3 ${
+              className={`flex items-center justify-between px-4 py-2.5 ${
                 i < ADJUSTABLE_PRAYERS.length - 1 ? "border-b border-on-surface/5" : ""
               }`}
             >
-              <span className="flex items-center gap-3">
-                <Icon size={28} />
-                <span className="text-sm font-medium text-on-surface">{tCommon(prayer)}</span>
+              <span className="flex items-center gap-2.5">
+                <Icon size={22} />
+                <span className="text-[13px] font-medium text-on-surface">{tCommon(prayer)}</span>
               </span>
 
               {/* Stepper: - [value] + */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 <button
                   type="button"
                   onClick={() => {
@@ -67,7 +69,7 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
                     haptic.selectionChanged();
                   }}
                   disabled={value <= -30}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-on-surface/5 text-on-surface transition-colors hover:bg-on-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 disabled:opacity-30"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-on-surface-muted transition-colors hover:bg-on-surface/10 active:bg-on-surface/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 disabled:opacity-30"
                   aria-label={`Decrease ${tCommon(prayer)}`}
                 >
                   <svg
@@ -85,8 +87,8 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
                 </button>
 
                 <span
-                  className={`w-12 text-center text-sm font-semibold tabular-nums ${
-                    value !== 0 ? "text-primary" : "text-on-surface-muted"
+                  className={`w-10 text-center text-[13px] font-semibold tabular-nums ${
+                    isModified ? "text-primary" : "text-on-surface-muted/60"
                   }`}
                 >
                   {value > 0 ? `+${value}` : value}
@@ -99,7 +101,7 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
                     haptic.selectionChanged();
                   }}
                   disabled={value >= 30}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-on-surface/5 text-on-surface transition-colors hover:bg-on-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 disabled:opacity-30"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-on-surface-muted transition-colors hover:bg-on-surface/10 active:bg-on-surface/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-surface/30 disabled:opacity-30"
                   aria-label={`Increase ${tCommon(prayer)}`}
                 >
                   <svg
@@ -120,24 +122,24 @@ export function ManualAdjustments({ onBack }: ManualAdjustmentsProps) {
             </div>
           );
         })}
+
+        {/* Footer: unit label + reset */}
+        <div className="flex items-center justify-between border-t border-on-surface/5 px-4 py-2.5">
+          <span className="text-[11px] text-on-surface-muted">{t("adjustmentsUnit")}</span>
+          {hasAnyAdjustment && (
+            <button
+              type="button"
+              onClick={() => {
+                resetAdjustments();
+                haptic.notification("success");
+              }}
+              className="text-[11px] font-medium text-destructive transition-colors hover:text-destructive/80"
+            >
+              {t("resetAdjustments")}
+            </button>
+          )}
+        </div>
       </div>
-
-      {/* Reset button */}
-      {hasAnyAdjustment && (
-        <button
-          type="button"
-          onClick={() => {
-            resetAdjustments();
-            haptic.notification("success");
-          }}
-          className="mt-3 w-full text-center text-sm font-medium text-destructive transition-colors hover:text-destructive/80"
-        >
-          {t("resetAdjustments")}
-        </button>
-      )}
-
-      {/* Unit label */}
-      <p className="mt-2 text-center text-[11px] text-on-surface-muted">{t("adjustmentsUnit")}</p>
     </div>
   );
 }

@@ -45,7 +45,7 @@ export const AuthResponseSchema = z.object({
   user: z.object({
     telegramId: z.number(),
     firstName: z.string(),
-    languageCode: z.string(),
+    languageCode: z.string().optional().default("en"),
     onboardingCompleted: z.boolean(),
   }),
 });
@@ -57,7 +57,10 @@ const PrayerNotificationPrefsSchema = z
   .record(z.string(), z.boolean())
   .transform(prayerNotificationsFromApi);
 
-const PrayerTimeAdjustmentsSchema = z.record(z.string(), z.number()).transform(adjustmentsFromApi);
+const PrayerTimeAdjustmentsSchema = z
+  .record(z.string(), z.number())
+  .default({})
+  .transform(adjustmentsFromApi);
 
 export const UserPreferencesResponseSchema = z
   .object({
@@ -68,6 +71,7 @@ export const UserPreferencesResponseSchema = z
     hijriCorrection: z.number(),
     timeFormat: z.enum(["12h", "24h"]),
     theme: z.string(),
+    languageCode: z.string().nullable().optional(),
     notificationsEnabled: z.boolean(),
     reminderTiming: z.string(),
     prayerNotifications: PrayerNotificationPrefsSchema,
@@ -79,6 +83,7 @@ export const UserPreferencesResponseSchema = z
     madhab: madhabFromApi(data.madhab),
     highLatitudeRule: data.highLatitudeRule.toLowerCase(),
     theme: themeFromApi(data.theme) as "light" | "dark" | "system",
+    locale: data.languageCode?.toLowerCase() ?? "en",
   }));
 
 export const OnboardingResponseSchema = z.object({
@@ -105,7 +110,7 @@ export const PrayerTimesResponseSchema = z.object({
   meta: z.object({
     calculationMethod: z.string(),
     madhab: z.string(),
-    adjustments: z.record(z.string(), z.number()),
+    adjustments: z.record(z.string(), z.number()).default({}),
   }),
 });
 
@@ -160,8 +165,16 @@ export const NearestCityResponseSchema = z.object({
 
 // ── Dashboard ──
 
-export const DashboardResponseSchema = z.object({
-  prayerTimes: PrayerTimesResponseSchema,
-  tracking: z.record(z.string(), z.record(z.string(), z.boolean())).transform(trackingFromApi),
-  streak: z.number(),
-});
+export const DashboardResponseSchema = z
+  .object({
+    prayerTimes: PrayerTimesResponseSchema,
+    tracking: z.object({
+      tracking: z.record(z.string(), z.record(z.string(), z.boolean())),
+    }),
+    stats: z.object({ streak: z.number() }).passthrough(),
+  })
+  .transform((data) => ({
+    prayerTimes: data.prayerTimes,
+    tracking: trackingFromApi(data.tracking.tracking),
+    streak: data.stats.streak,
+  }));

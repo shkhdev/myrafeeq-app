@@ -16,7 +16,7 @@ import { getNearestCity } from "@/lib/api/cities";
 import { getPrayerIcon } from "@/lib/prayer-icons";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 import type { City } from "@/types/city";
-import type { PrayerName } from "@/types/prayer";
+import type { Madhab, PrayerName } from "@/types/prayer";
 
 import { CitySearch } from "./CitySearch";
 import { LocationIcon } from "./icons/LocationIcon";
@@ -33,6 +33,7 @@ export function LocationSetup() {
   const selectedCity = useOnboardingStore((s) => s.data.city);
   const latitude = useOnboardingStore((s) => s.data.latitude);
   const longitude = useOnboardingStore((s) => s.data.longitude);
+  const madhab = useOnboardingStore((s) => s.data.madhab);
   const setCity = useOnboardingStore((s) => s.setCity);
   const setStep = useOnboardingStore((s) => s.setStep);
 
@@ -107,6 +108,7 @@ export function LocationSetup() {
         city={selectedCity}
         latitude={latitude ?? selectedCity.latitude}
         longitude={longitude ?? selectedCity.longitude}
+        madhab={madhab}
         onBack={handleBack}
         onContinue={handleContinue}
       />
@@ -156,6 +158,7 @@ interface LocationSuccessViewProps {
   city: City;
   latitude: number;
   longitude: number;
+  madhab: Madhab;
   onBack: () => void;
   onContinue: () => void;
 }
@@ -164,6 +167,7 @@ function LocationSuccessView({
   city,
   latitude,
   longitude,
+  madhab,
   onBack,
   onContinue,
 }: LocationSuccessViewProps) {
@@ -171,8 +175,14 @@ function LocationSuccessView({
   const tPrayers = useTranslations("onboarding.notifications");
   const tCommon = useTranslations("common");
 
-  const prayerTimesOptions: { enabled: boolean; timezone?: string; method?: string } = {
+  const prayerTimesOptions: {
+    enabled: boolean;
+    timezone?: string;
+    method?: string;
+    madhab?: string;
+  } = {
     enabled: true,
+    madhab: madhab.toUpperCase(),
   };
   if (city.timezone) prayerTimesOptions.timezone = city.timezone;
   if (city.defaultMethod) prayerTimesOptions.method = city.defaultMethod;

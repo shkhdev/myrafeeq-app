@@ -1,6 +1,6 @@
 import { useTranslations } from "use-intl";
 
-import { usePrayerTracking, useTogglePrayer } from "@/hooks/api/usePrayerTracking";
+import { useTogglePrayer } from "@/hooks/api/usePrayerTracking";
 import { useHaptic } from "@/hooks/useHaptic";
 import {
   ALL_PRAYER_SLOTS,
@@ -15,6 +15,7 @@ import { PrayerRow } from "./PrayerRow";
 
 interface PrayerTimesListProps {
   prayerTimes: PrayerTimes;
+  tracking: Record<string, Record<string, boolean>>;
 }
 
 function isPrayerPast(prayer: string, currentPeriod: PrayerTimeSlot | null): boolean {
@@ -24,16 +25,15 @@ function isPrayerPast(prayer: string, currentPeriod: PrayerTimeSlot | null): boo
   return slotIndex >= 0 && slotIndex < currentIndex;
 }
 
-export function PrayerTimesList({ prayerTimes }: PrayerTimesListProps) {
+export function PrayerTimesList({ prayerTimes, tracking }: PrayerTimesListProps) {
   const t = useTranslations("home");
   const haptic = useHaptic();
   const today = getTodayDate();
   const currentPeriod = getCurrentPrayerPeriod(prayerTimes);
 
-  const { data: trackingData } = usePrayerTracking(today);
   const toggleMutation = useTogglePrayer();
 
-  const todayTracking = trackingData?.tracking[today] ?? {};
+  const todayTracking = tracking[today] ?? {};
   const isPrayed = (prayer: PrayerName) => todayTracking[prayer] === true;
   const prayedCount = PRAYER_NAMES.filter((p) => isPrayed(p)).length;
 

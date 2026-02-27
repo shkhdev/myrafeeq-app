@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { City } from "@/types/city";
 import type { OnboardingData, OnboardingStep, ReminderTiming } from "@/types/onboarding";
-import type { PrayerName } from "@/types/prayer";
+import type { Madhab, PrayerName } from "@/types/prayer";
 
 interface OnboardingState {
   currentStep: OnboardingStep;
@@ -12,6 +12,7 @@ interface OnboardingState {
   setStep: (step: OnboardingStep) => void;
   setStoryCardIndex: (index: number) => void;
   setCity: (city: City, latitude?: number | undefined, longitude?: number | undefined) => void;
+  setMadhab: (madhab: Madhab) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
   setPrayerNotification: (prayer: PrayerName, enabled: boolean) => void;
   setAllPrayerNotifications: (enabled: boolean) => void;
@@ -27,6 +28,7 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
     city: null,
     latitude: null,
     longitude: null,
+    madhab: "hanafi",
     notificationsEnabled: true,
     prayerNotifications: {
       fajr: true,
@@ -47,7 +49,14 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
         city,
         latitude: latitude ?? city.latitude,
         longitude: longitude ?? city.longitude,
+        ...(city.defaultMadhab !== undefined
+          ? { madhab: city.defaultMadhab.toLowerCase() as Madhab }
+          : {}),
       },
+    })),
+  setMadhab: (madhab) =>
+    set((state) => ({
+      data: { ...state.data, madhab },
     })),
   setNotificationsEnabled: (enabled) =>
     set((state) => ({

@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock Sentry before importing api-client
-vi.mock("@sentry/react", () => ({
-  captureException: vi.fn(),
+// Mock sentry module used by api-client
+vi.mock("@/lib/sentry", () => ({
+  reportError: vi.fn(),
+  reportRetrySuccess: vi.fn(),
 }));
 
 // Mock the Telegram SDK
@@ -17,7 +18,8 @@ vi.mock("@/env", () => ({
 }));
 
 import { useAuthStore } from "@/stores/auth-store";
-import { ApiError, api } from "../api-client";
+import { type AppError, ServerError, ValidationError } from "../errors";
+import { api } from "../api-client";
 
 beforeEach(() => {
   useAuthStore.setState({ token: "test-token", telegramId: 123, onboardingCompleted: true });
@@ -99,26 +101,26 @@ describe("api.put", () => {
 });
 
 describe("error handling", () => {
-  it("throws ApiError on non-ok response with error body", async () => {
+  it("throws ValidationError on 400 response with error body", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,
       json: () => Promise.resolve({ error: { code: "BAD_REQUEST", message: "Invalid input" } }),
     });
 
-    await expect(api.get("/api/test")).rejects.toThrow(ApiError);
+    await expect(api.get("/api/test")).rejects.toThrow(ValidationError);
 
     try {
       await api.get("/api/test");
     } catch (e) {
-      expect(e).toBeInstanceOf(ApiError);
-      expect((e as ApiError).code).toBe("BAD_REQUEST");
-      expect((e as ApiError).status).toBe(400);
-      expect((e as ApiError).message).toBe("Invalid input");
+      expect(e).toBeInstanceOf(ValidationError);
+      expect((e as AppError).code).toBe("BAD_REQUEST");
+      expect((e as AppError).statusCode).toBe(400);
+      expect((e as AppError).message).toBe("Invalid input");
     }
   });
 
-  it("throws ApiError with defaults when body is not JSON", async () => {
+  it("throws ServerError with defaults when body is not JSON", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500,
@@ -128,9 +130,9 @@ describe("error handling", () => {
     try {
       await api.get("/api/test");
     } catch (e) {
-      expect(e).toBeInstanceOf(ApiError);
-      expect((e as ApiError).code).toBe("UNKNOWN_ERROR");
-      expect((e as ApiError).status).toBe(500);
+      expect(e).toBeInstanceOf(ServerError);
+      expect((e as AppError).code).toBe("UNKNOWN_ERROR");
+      expect((e as AppError).statusCode).toBe(500);
     }
   });
 });

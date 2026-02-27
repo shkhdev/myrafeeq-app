@@ -21,6 +21,7 @@ function makePrefsResponse(
     hijriCorrection: 1,
     timeFormat: "24h",
     theme: "dark",
+    locale: "en",
     notificationsEnabled: true,
     reminderTiming: "FIVE_MIN",
     prayerNotifications: { fajr: true, dhuhr: false, asr: true, maghrib: true, isha: false },

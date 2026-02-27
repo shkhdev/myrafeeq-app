@@ -1,4 +1,5 @@
 import type { City } from "./city";
+import type { Madhab } from "./prayer";
 
 export type OnboardingStep = "welcome" | "location" | "notifications" | "completion";
 
@@ -28,6 +29,7 @@ export interface OnboardingData {
   city: City | null;
   latitude: number | null;
   longitude: number | null;
+  madhab: Madhab;
   notificationsEnabled: boolean;
   prayerNotifications: PrayerNotificationPrefs;
   reminderTiming: ReminderTiming;

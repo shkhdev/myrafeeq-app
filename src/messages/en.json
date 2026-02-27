@@ -94,7 +94,9 @@
     "resetAdjustments": "Reset All to 0",
     "about": "About",
     "version": "Version {version}",
-    "appDescription": "Your Islamic companion"
+    "appDescription": "Your Islamic companion",
+    "feedback": "Send Feedback",
+    "feedbackUnavailable": "Feedback is currently unavailable. Please try again later."
   },
   "onboarding": {
     "welcome": {

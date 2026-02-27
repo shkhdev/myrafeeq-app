@@ -143,7 +143,7 @@ export function StoryCards() {
 
       if (isLeftZone && currentIndex > 0) {
         goToCard(currentIndex - 1);
-      } else if (currentIndex < TOTAL_CARDS - 1) {
+      } else if (!isLeftZone && currentIndex < TOTAL_CARDS - 1) {
         goToCard(currentIndex + 1);
       }
     } else if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dy) < Math.abs(dx)) {

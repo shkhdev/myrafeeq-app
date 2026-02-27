@@ -1,7 +1,7 @@
 import { useTranslations } from "use-intl";
 
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
-import { usePrayerTimes } from "@/hooks/api/usePrayerTimes";
+import { useDashboard } from "@/hooks/api/useDashboard";
 import { usePreferencesStore } from "@/stores/preferences-store";
 
 import { ErrorState } from "../ui/ErrorState";
@@ -12,8 +12,9 @@ import { PrayerTimesList } from "./PrayerTimesList";
 export function HomeScreen() {
   const t = useTranslations("home");
   const city = usePreferencesStore((s) => s.city);
-  const { data, isLoading, isError, refetch } = usePrayerTimes();
-  const prayerTimes = data?.[0]?.times ?? null;
+  const { data, isLoading, isError, refetch } = useDashboard();
+  const prayerTimes = data?.prayerTimes.times ?? null;
+  const tracking = data?.tracking ?? {};
 
   return (
     <ScreenLayout>
@@ -27,7 +28,7 @@ export function HomeScreen() {
       ) : prayerTimes ? (
         <>
           <PrayerHeroCard prayerTimes={prayerTimes} />
-          <PrayerTimesList prayerTimes={prayerTimes} />
+          <PrayerTimesList prayerTimes={prayerTimes} tracking={tracking} />
         </>
       ) : null}
       {/* Bottom safe area padding */}

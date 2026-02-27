@@ -94,7 +94,9 @@
     "resetAdjustments": "إعادة تعيين الكل إلى 0",
     "about": "حول التطبيق",
     "version": "الإصدار {version}",
-    "appDescription": "رفيقك الإسلامي"
+    "appDescription": "رفيقك الإسلامي",
+    "feedback": "إرسال ملاحظات",
+    "feedbackUnavailable": "الملاحظات غير متاحة حالياً. يرجى المحاولة لاحقاً."
   },
   "onboarding": {
     "welcome": {
