@@ -123,6 +123,13 @@ export interface NearestCityResponse {
   distanceKm: number;
 }
 
+// Dashboard
+export interface DashboardResponse {
+  prayerTimes: PrayerTimesResponse;
+  tracking: Record<string, Record<string, boolean>>;
+  streak: number;
+}
+
 // Error
 export interface ApiErrorResponse {
   error: {

@@ -28,11 +28,8 @@ export type CalculationMethodId =
   | "dubai"
   | "qatar"
   | "kuwait"
-  | "turkey"
-  | "tehran"
-  | "jakim"
-  | "kemenag"
-  | "singapore";
+  | "singapore"
+  | "mbouz";
 
 export interface CalculationMethod {
   id: CalculationMethodId;
@@ -50,14 +47,11 @@ export const CALCULATION_METHODS: readonly CalculationMethod[] = [
   { id: "dubai", fajrAngle: 18.2, ishaAngle: 18.2, ishaMinutes: null },
   { id: "qatar", fajrAngle: 18, ishaAngle: null, ishaMinutes: 90 },
   { id: "kuwait", fajrAngle: 18, ishaAngle: 17.5, ishaMinutes: null },
-  { id: "turkey", fajrAngle: 18, ishaAngle: 17, ishaMinutes: null },
-  { id: "tehran", fajrAngle: 17.7, ishaAngle: 14, ishaMinutes: null },
-  { id: "jakim", fajrAngle: 20, ishaAngle: 18, ishaMinutes: null },
-  { id: "kemenag", fajrAngle: 20, ishaAngle: 18, ishaMinutes: null },
   { id: "singapore", fajrAngle: 20, ishaAngle: 18, ishaMinutes: null },
+  { id: "mbouz", fajrAngle: 18, ishaAngle: 17, ishaMinutes: null },
 ] as const;
 
-export type Madhab = "standard" | "hanafi";
+export type Madhab = "shafi" | "hanafi";
 
 export type HighLatitudeRule = "middle_of_night" | "one_seventh" | "angle_based";
 

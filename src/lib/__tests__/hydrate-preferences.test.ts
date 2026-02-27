@@ -16,7 +16,7 @@ function makePrefsResponse(
       longitude: 39.82,
     },
     calculationMethod: "umm_al_qura",
-    madhab: "standard",
+    madhab: "shafi",
     highLatitudeRule: "angle_based",
     hijriCorrection: 1,
     timeFormat: "24h",
@@ -45,7 +45,7 @@ describe("hydrateFromBackend", () => {
     expect(state.latitude).toBe(21.42);
     expect(state.longitude).toBe(39.82);
     expect(state.calculationMethod).toBe("umm_al_qura");
-    expect(state.madhab).toBe("standard");
+    expect(state.madhab).toBe("shafi");
     expect(state.highLatitudeRule).toBe("angle_based");
     expect(state.hijriCorrection).toBe(1);
     expect(state.timeFormat).toBe("24h");

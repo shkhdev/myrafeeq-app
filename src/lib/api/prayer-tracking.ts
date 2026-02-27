@@ -16,16 +16,20 @@ export async function getPrayerTracking(params?: {
   from?: string;
   to?: string;
 }): Promise<PrayerTrackingResponse> {
-  const data = await api.get<PrayerTrackingResponse>("/api/prayer-tracking", params);
+  const data = await api.get<PrayerTrackingResponse>("/api/v1/prayer-tracking", params);
   return PrayerTrackingResponseSchema.parse(data);
 }
 
 export async function togglePrayer(data: TogglePrayerRequest): Promise<TogglePrayerResponse> {
-  const result = await api.post<TogglePrayerResponse>("/api/prayer-tracking/toggle", data);
+  const apiData = {
+    ...data,
+    prayer: data.prayer.toUpperCase(),
+  };
+  const result = await api.post<TogglePrayerResponse>("/api/v1/prayer-tracking/toggle", apiData);
   return TogglePrayerResponseSchema.parse(result);
 }
 
 export async function getPrayerStats(period: string): Promise<PrayerStatsResponse> {
-  const data = await api.get<PrayerStatsResponse>("/api/prayer-tracking/stats", { period });
+  const data = await api.get<PrayerStatsResponse>("/api/v1/prayer-tracking/stats", { period });
   return PrayerStatsResponseSchema.parse(data);
 }

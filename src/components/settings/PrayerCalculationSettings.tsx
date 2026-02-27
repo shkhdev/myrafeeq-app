@@ -110,7 +110,7 @@ export function PrayerCalculationSettings() {
       <div className="border-b border-on-surface/5 px-4 py-3.5">
         <p className="mb-2 text-[15px] font-medium text-on-surface">{t("madhab")}</p>
         <div className="flex gap-1.5 rounded-xl bg-on-surface/5 p-1">
-          {(["standard", "hanafi"] as const).map((m) => (
+          {(["shafi", "hanafi"] as const).map((m) => (
             <button
               key={m}
               type="button"

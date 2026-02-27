@@ -36,7 +36,7 @@ async function tryReauth(): Promise<boolean> {
     }
     if (!initData) return false;
 
-    const response = await fetch(`${API_URL}/api/auth/validate`, {
+    const response = await fetch(`${API_URL}/api/v1/auth/token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ initData }),
@@ -158,6 +158,11 @@ export const api = {
   put: <T>(path: string, body?: unknown) =>
     request<T>(path, {
       method: "PUT",
+      body: body ? JSON.stringify(body) : null,
+    }),
+  patch: <T>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "PATCH",
       body: body ? JSON.stringify(body) : null,
     }),
 };

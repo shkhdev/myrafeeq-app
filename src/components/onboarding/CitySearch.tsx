@@ -3,7 +3,6 @@ import { useTranslations } from "use-intl";
 import { useCitySearch } from "@/hooks/api/useCities";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useHaptic } from "@/hooks/useHaptic";
-import { useLocaleStore } from "@/stores/locale-store";
 import type { City } from "@/types/city";
 
 interface CitySearchProps {
@@ -13,10 +12,9 @@ interface CitySearchProps {
 export function CitySearch({ onSelect }: CitySearchProps) {
   const t = useTranslations("onboarding.location");
   const haptic = useHaptic();
-  const locale = useLocaleStore((s) => s.locale);
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, 300);
-  const { data, isLoading } = useCitySearch(debouncedQuery, locale.toUpperCase());
+  const { data, isLoading } = useCitySearch(debouncedQuery);
   const cities = data?.cities ?? [];
 
   return (

@@ -1,4 +1,12 @@
 import { z } from "zod/v4";
+import {
+  adjustmentsFromApi,
+  byPrayerFromApi,
+  madhabFromApi,
+  prayerNotificationsFromApi,
+  themeFromApi,
+  trackingFromApi,
+} from "@/lib/api-transforms";
 import type { City } from "@/types/city";
 
 // ── City ──
@@ -44,36 +52,34 @@ export const AuthResponseSchema = z.object({
 
 // ── Preferences ──
 
-const PrayerNotificationPrefsSchema = z.object({
-  fajr: z.boolean(),
-  dhuhr: z.boolean(),
-  asr: z.boolean(),
-  maghrib: z.boolean(),
-  isha: z.boolean(),
-});
+// API sends UPPERCASE keys, transform to lowercase internal representation
+const PrayerNotificationPrefsSchema = z
+  .record(z.string(), z.boolean())
+  .transform(prayerNotificationsFromApi);
 
-const PrayerTimeAdjustmentsSchema = z.object({
-  fajr: z.number(),
-  sunrise: z.number(),
-  dhuhr: z.number(),
-  asr: z.number(),
-  maghrib: z.number(),
-  isha: z.number(),
-});
+const PrayerTimeAdjustmentsSchema = z.record(z.string(), z.number()).transform(adjustmentsFromApi);
 
-export const UserPreferencesResponseSchema = z.object({
-  city: CitySchema.nullable(),
-  calculationMethod: z.string(),
-  madhab: z.string(),
-  highLatitudeRule: z.string(),
-  hijriCorrection: z.number(),
-  timeFormat: z.enum(["12h", "24h"]),
-  theme: z.enum(["light", "dark", "system"]),
-  notificationsEnabled: z.boolean(),
-  reminderTiming: z.string(),
-  prayerNotifications: PrayerNotificationPrefsSchema,
-  manualAdjustments: PrayerTimeAdjustmentsSchema,
-});
+export const UserPreferencesResponseSchema = z
+  .object({
+    city: CitySchema.nullable(),
+    calculationMethod: z.string(),
+    madhab: z.string(),
+    highLatitudeRule: z.string(),
+    hijriCorrection: z.number(),
+    timeFormat: z.enum(["12h", "24h"]),
+    theme: z.string(),
+    notificationsEnabled: z.boolean(),
+    reminderTiming: z.string(),
+    prayerNotifications: PrayerNotificationPrefsSchema,
+    manualAdjustments: PrayerTimeAdjustmentsSchema,
+  })
+  .transform((data) => ({
+    ...data,
+    calculationMethod: data.calculationMethod.toLowerCase(),
+    madhab: madhabFromApi(data.madhab),
+    highLatitudeRule: data.highLatitudeRule.toLowerCase(),
+    theme: themeFromApi(data.theme) as "light" | "dark" | "system",
+  }));
 
 export const OnboardingResponseSchema = z.object({
   user: AuthResponseSchema.shape.user,
@@ -105,27 +111,41 @@ export const PrayerTimesResponseSchema = z.object({
 
 // ── Prayer Tracking ──
 
-export const PrayerTrackingResponseSchema = z.object({
-  tracking: z.record(z.string(), z.record(z.string(), z.boolean())),
-});
+export const PrayerTrackingResponseSchema = z
+  .object({
+    tracking: z.record(z.string(), z.record(z.string(), z.boolean())),
+  })
+  .transform((data) => ({
+    tracking: trackingFromApi(data.tracking),
+  }));
 
-export const TogglePrayerResponseSchema = z.object({
-  date: z.string(),
-  prayer: z.string(),
-  prayed: z.boolean(),
-  toggledAt: z.string(),
-});
+export const TogglePrayerResponseSchema = z
+  .object({
+    date: z.string(),
+    prayer: z.string(),
+    prayed: z.boolean(),
+    toggledAt: z.string(),
+  })
+  .transform((data) => ({
+    ...data,
+    prayer: data.prayer.toLowerCase(),
+  }));
 
-export const PrayerStatsResponseSchema = z.object({
-  period: z.string(),
-  from: z.string(),
-  to: z.string(),
-  total: z.number(),
-  completed: z.number(),
-  percentage: z.number(),
-  byPrayer: z.record(z.string(), z.object({ total: z.number(), completed: z.number() })),
-  streak: z.number(),
-});
+export const PrayerStatsResponseSchema = z
+  .object({
+    period: z.string(),
+    from: z.string(),
+    to: z.string(),
+    total: z.number(),
+    completed: z.number(),
+    percentage: z.number(),
+    byPrayer: z.record(z.string(), z.object({ total: z.number(), completed: z.number() })),
+    streak: z.number(),
+  })
+  .transform((data) => ({
+    ...data,
+    byPrayer: byPrayerFromApi(data.byPrayer),
+  }));
 
 // ── Cities ──
 
@@ -136,4 +156,12 @@ export const CitySearchResponseSchema = z.object({
 export const NearestCityResponseSchema = z.object({
   city: CitySchema,
   distanceKm: z.number(),
+});
+
+// ── Dashboard ──
+
+export const DashboardResponseSchema = z.object({
+  prayerTimes: PrayerTimesResponseSchema,
+  tracking: z.record(z.string(), z.record(z.string(), z.boolean())).transform(trackingFromApi),
+  streak: z.number(),
 });

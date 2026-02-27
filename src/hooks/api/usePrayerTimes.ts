@@ -11,17 +11,18 @@ export function usePrayerTimes(date?: string) {
 export function usePrayerTimesByLocation(
   lat: number,
   lon: number,
-  options?: { timezone?: string; method?: string; enabled?: boolean },
+  options?: { timezone?: string; method?: string; madhab?: string; enabled?: boolean },
 ) {
-  const { timezone, method, enabled = true } = options ?? {};
+  const { timezone, method, madhab, enabled = true } = options ?? {};
   return useQuery({
-    queryKey: ["prayer-times-location", lat, lon, timezone, method],
+    queryKey: ["prayer-times-location", lat, lon, timezone, method, madhab],
     queryFn: () =>
       getPrayerTimesByLocation({
         lat,
         lon,
         ...(timezone != null ? { timezone } : {}),
         ...(method != null ? { method } : {}),
+        ...(madhab != null ? { madhab } : {}),
       }),
     enabled,
   });

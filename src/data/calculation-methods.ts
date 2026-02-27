@@ -13,13 +13,12 @@ const CITY_METHOD_MAP: Record<string, CalculationMethodId> = {
   cairo: "egypt",
   // Pakistan / India / Bangladesh → Karachi
   karachi: "karachi",
-  // Turkey → Diyanet
-  istanbul: "turkey",
-  ankara: "turkey",
-  // Malaysia → JAKIM
-  "kuala-lumpur": "jakim",
-  // Indonesia → Kemenag
-  jakarta: "kemenag",
+  // Turkey → MWL (turkey method removed)
+  istanbul: "mwl",
+  ankara: "mwl",
+  // Malaysia / Indonesia → Singapore
+  "kuala-lumpur": "singapore",
+  jakarta: "singapore",
   // UAE → Dubai
   dubai: "dubai",
   // Qatar → Qatar

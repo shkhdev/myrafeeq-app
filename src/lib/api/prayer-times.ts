@@ -7,7 +7,7 @@ export async function getPrayerTimes(params?: {
   date?: string;
   days?: number;
 }): Promise<PrayerTimesResponse[]> {
-  const data = await api.get<PrayerTimesResponse[]>("/api/prayer-times", params);
+  const data = await api.get<PrayerTimesResponse[]>("/api/v1/prayer-times", params);
   return z.array(PrayerTimesResponseSchema).parse(data);
 }
 
@@ -16,8 +16,9 @@ export async function getPrayerTimesByLocation(params: {
   lon: number;
   date?: string;
   method?: string;
+  madhab?: string;
   timezone?: string;
 }): Promise<PrayerTimesResponse> {
-  const data = await api.get<PrayerTimesResponse>("/api/prayer-times/by-location", params);
+  const data = await api.get<PrayerTimesResponse>("/api/v1/prayer-times/by-location", params);
   return PrayerTimesResponseSchema.parse(data);
 }

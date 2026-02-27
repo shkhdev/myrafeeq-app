@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getNearestCity, searchCities } from "@/lib/api/cities";
 
-export function useCitySearch(query: string, locale?: string) {
+export function useCitySearch(query: string) {
   return useQuery({
-    queryKey: ["cities-search", query, locale],
-    queryFn: () => searchCities({ q: query, ...(locale != null ? { locale } : {}) }),
+    queryKey: ["cities-search", query],
+    queryFn: () => searchCities({ q: query }),
     enabled: query.length >= 2,
   });
 }

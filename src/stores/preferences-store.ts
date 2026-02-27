@@ -83,7 +83,7 @@ export const usePreferencesStore = create<PreferencesState>()((set) => ({
   timeFormat: "12h",
   // Prayer calculation
   calculationMethod: "mwl",
-  madhab: "standard",
+  madhab: "shafi",
   highLatitudeRule: "angle_based",
   hijriCorrection: 0,
   adjustments: { ...DEFAULT_ADJUSTMENTS },
